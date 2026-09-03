@@ -38,6 +38,8 @@ const Layout = () => {
           <Link to="/policy/terms" className="hover:text-black transition">Terms & Conditions</Link>
           <span>|</span>
           <Link to="/policy/refund" className="hover:text-black transition">Cancellation & Refund Policy</Link>
+          <span>|</span>
+          <Link to="/admin/login" className="hover:text-black transition font-semibold text-gray-700">Admin Login</Link>
         </div>
       </footer>
     </div>
