@@ -21,7 +21,9 @@ app.use('/api/', apiLimiter);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || true,
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json());
