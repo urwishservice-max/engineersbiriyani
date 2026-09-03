@@ -16,7 +16,7 @@ const OrderTracking = () => {
 
   const fetchOrder = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/orders/${orderId}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/orders/${orderId}`);
       if (response.data.success) {
         setOrder(response.data.data);
         if (response.data.data.feedback) {
@@ -44,7 +44,7 @@ const OrderTracking = () => {
     
     setSubmittingFeedback(true);
     try {
-      const response = await axios.post(`http://localhost:5000/api/orders/${orderId}/feedback`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/orders/${orderId}/feedback`, {
         rating,
         comment
       });

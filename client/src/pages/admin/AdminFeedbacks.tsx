@@ -12,7 +12,7 @@ const AdminFeedbacks = () => {
 
   const fetchFeedbacks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/feedbacks', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/feedbacks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -34,7 +34,7 @@ const AdminFeedbacks = () => {
 
   const toggleApproval = async (orderId: string, currentStatus: boolean) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/orders/${orderId}/feedback/approve`, {
+      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/feedback/approve`, {
         isApproved: !currentStatus
       }, {
         headers: { Authorization: `Bearer ${token}` }

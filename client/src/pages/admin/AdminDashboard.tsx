@@ -15,7 +15,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/orders', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data.success) {

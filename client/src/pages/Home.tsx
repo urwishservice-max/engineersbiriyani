@@ -10,7 +10,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/orders/feedbacks');
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/orders/feedbacks`);
         if (response.data.success && response.data.data.length > 0) {
           setFeedbacks(response.data.data);
         }

@@ -16,7 +16,7 @@ const AdminOrderDetails = () => {
 
   const fetchOrder = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/admin/orders/${orderId}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -41,7 +41,7 @@ const AdminOrderDetails = () => {
     
     setIsVerifying(true);
     try {
-      await axios.patch(`http://localhost:5000/api/admin/orders/${orderId}/payment/verify`, {}, {
+      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/payment/verify`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       await fetchOrder();
@@ -60,7 +60,7 @@ const AdminOrderDetails = () => {
     
     setIsVerifying(true);
     try {
-      await axios.patch(`http://localhost:5000/api/admin/orders/${orderId}/payment/reject`, { reason: rejectReason }, {
+      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/payment/reject`, { reason: rejectReason }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowRejectInput(false);
@@ -74,7 +74,7 @@ const AdminOrderDetails = () => {
 
   const updateStatus = async (status: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/orders/${orderId}/status`, { status }, {
+      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       await fetchOrder();

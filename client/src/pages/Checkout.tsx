@@ -40,7 +40,7 @@ const Checkout = () => {
     setIsSubmitting(true);
     setApiError('');
     try {
-      const response = await axios.post('http://localhost:5000/api/orders', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/orders`, {
         customer: data,
         quantity,
         optionType,
