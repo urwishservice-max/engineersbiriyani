@@ -24,6 +24,7 @@ const Layout = () => {
           <Link to="/pricing" className={`text-[11px] font-semibold uppercase tracking-[1.5px] transition hover:text-amber-500 ${isActive('/pricing') ? 'text-amber-500' : 'text-gray-900'}`}>Pricing</Link>
           <Link to="/contact" className={`text-[11px] font-semibold uppercase tracking-[1.5px] transition hover:text-amber-500 ${isActive('/contact') ? 'text-amber-500' : 'text-gray-900'}`}>Contact</Link>
           <Link to="/checkout" className={`text-[11px] font-extrabold uppercase tracking-[1.5px] transition hover:text-amber-500 ${isActive('/checkout') ? 'text-amber-500' : 'text-gray-900'}`}>Order Now</Link>
+          <Link to="/admin/login" className="text-[11px] font-bold uppercase tracking-[1.5px] bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">Admin Login</Link>
         </div>
 
       </header>
