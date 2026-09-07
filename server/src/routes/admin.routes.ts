@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { loginAdmin } from '../controllers/admin.controller';
 import { verifyAdmin } from '../middleware/auth';
 import Order from '../models/Order';
+import { deletePaymentScreenshot, getStorageUsage } from '../services/cloudinary.service';
+import { sendPaymentConfirmedNotification, sendOutForDeliveryNotification } from '../services/whatsapp.service';
 
 const router = Router();
 
@@ -116,6 +118,89 @@ router.patch('/orders/:orderId/feedback/approve', async (req, res) => {
     res.status(200).json({ success: true, message: 'Feedback approval updated', data: order });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to update feedback approval' });
+  }
+});
+
+// Delete Order
+router.delete('/orders/:orderId', async (req, res) => {
+  try {
+    const order = await Order.findOne({ orderId: req.params.orderId });
+    if (!order) {
+       res.status(404).json({ success: false, message: 'Order not found' });
+       return;
+    }
+    
+    // Attempt to delete from cloudinary if there is a publicId
+    if (order.payment.screenshotPublicId) {
+      await deletePaymentScreenshot(order.payment.screenshotPublicId);
+    } else if (order.payment.screenshotUrl) {
+      // Fallback: Extract publicId from URL if it exists but wasn't saved explicitly
+      // Basic extraction for standard Cloudinary URLs: /v1234567/biriyani-orders/payments/abc1234
+      const matches = order.payment.screenshotUrl.match(/\/v\d+\/(.+)\.[a-z]+$/i);
+      if (matches && matches[1]) {
+        await deletePaymentScreenshot(matches[1]);
+      }
+    }
+
+    await Order.deleteOne({ orderId: req.params.orderId });
+    res.status(200).json({ success: true, message: 'Order deleted successfully' });
+  } catch (error) {
+    console.error('Delete Order Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete order' });
+  }
+});
+
+// Send Payment Notification
+router.post('/orders/:orderId/notify/payment', async (req, res) => {
+  try {
+    const order = await Order.findOne({ orderId: req.params.orderId });
+    if (!order) {
+       res.status(404).json({ success: false, message: 'Order not found' });
+       return;
+    }
+    
+    const sent = await sendPaymentConfirmedNotification(order);
+    if (sent) {
+      res.status(200).json({ success: true, message: 'Payment notification sent' });
+    } else {
+      res.status(500).json({ success: false, message: 'Failed to send WhatsApp message. Check API keys or template limits.' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to trigger notification' });
+  }
+});
+
+// Send Delivery Notification
+router.post('/orders/:orderId/notify/delivery', async (req, res) => {
+  try {
+    const order = await Order.findOne({ orderId: req.params.orderId });
+    if (!order) {
+       res.status(404).json({ success: false, message: 'Order not found' });
+       return;
+    }
+    
+    const sent = await sendOutForDeliveryNotification(order);
+    if (sent) {
+      res.status(200).json({ success: true, message: 'Delivery notification sent' });
+    } else {
+      res.status(500).json({ success: false, message: 'Failed to send WhatsApp message. Check API keys or template limits.' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to trigger notification' });
+  }
+});
+
+// Get Storage Details
+router.get('/storage', async (req, res) => {
+  try {
+    const usage = await getStorageUsage();
+    if (!usage) {
+       res.status(500).json({ success: false, message: 'Failed to fetch storage usage' });
+       return;
+    }
+    res.status(200).json({ success: true, data: usage });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error fetching storage' });
   }
 });
 

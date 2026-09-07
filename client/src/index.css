@@ -24,6 +24,17 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+
+    /* Global Design System Tokens */
+    --brand-bg-dark: #111111;
+    --brand-bg-cream: #F4F4F4;
+    --brand-accent-orange: #E8622C;
+    --brand-accent-orange-hover: #D1531F;
+    --brand-text-dark: #1A1A1A;
+    --brand-text-light: #FFFFFF;
+    --brand-text-muted-dark: #888888;
+    --brand-text-muted-light: #DDDDDD;
+    --brand-border-soft: #EFEFEF;
   }
 
   .dark {
@@ -54,6 +65,38 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-light tracking-tight;
+  }
+}
+
+@layer components {
+  /* Global Design System Typography Utilities */
+  .eyebrow {
+    @apply text-[0.75rem] uppercase tracking-[0.2em] text-[#888888] font-medium mb-4 block;
+  }
+
+  .text-gradient-orange {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#E8622C] to-[#fad0c4];
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    @apply rounded-full bg-[var(--brand-accent-orange)] text-white py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-[var(--brand-accent-orange-hover)] hover:shadow-md inline-flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply rounded-full bg-transparent border-[1.5px] border-[var(--brand-accent-orange)] text-[var(--brand-accent-orange)] py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-[var(--brand-accent-orange)] hover:text-white inline-flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary-light {
+    @apply rounded-full bg-transparent border-[1.5px] border-white text-white py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-white hover:text-[var(--brand-text-dark)] inline-flex items-center justify-center gap-2;
+  }
+
+  /* Cards */
+  .brand-card {
+    @apply rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden;
   }
 }

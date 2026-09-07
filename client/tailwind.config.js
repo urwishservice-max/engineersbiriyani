@@ -7,6 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
+        brand: {
+          dark: "var(--brand-bg-dark)",
+          cream: "var(--brand-bg-cream)",
+          orange: "var(--brand-accent-orange)",
+          orangeHover: "var(--brand-accent-orange-hover)",
+          textDark: "var(--brand-text-dark)",
+          textLight: "var(--brand-text-light)",
+          mutedDark: "var(--brand-text-muted-dark)",
+          mutedLight: "var(--brand-text-muted-light)",
+          borderSoft: "var(--brand-border-soft)",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -40,6 +51,10 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Inter', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",

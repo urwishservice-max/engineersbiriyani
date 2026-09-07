@@ -14,7 +14,6 @@ import OrderTracking from './pages/OrderTracking';
 import About from './pages/About';
 import Menu from './pages/Menu';
 import Contact from './pages/Contact';
-import Pricing from './pages/Pricing';
 import LegalPage from './pages/LegalPage';
 
 // Admin Pages
@@ -33,7 +32,6 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="menu" element={<Menu />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="pricing" element={<Pricing />} />
           <Route path="policy/:policyType" element={<LegalPage />} />
           
           <Route path="checkout" element={<Checkout />} />

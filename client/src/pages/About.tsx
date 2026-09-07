@@ -1,79 +1,99 @@
 import React from 'react';
-
-const teamData = [
-  { name: "Mr. Pranav", title: "Founder", photo: "/Pi7_Tool_IMG-20231102-WA0023 (1).jpg", insta: "#" },
-  { name: "Mr. Abrar Shariff", title: "Co-Founder", photo: "/IMG20240626124102.jpg", insta: "#" },
-  { name: "Mr. Dinesh Kumar", title: "CEO", photo: "/WhatsApp Image 2025-05-17 at 19.58.23_23657aee.jpg", insta: "#" },
-  { name: "Mr. Amjath Ali Khan", title: "CFO", photo: "/IMG_20251207_102134.jpg", insta: "#" },
-  { name: "Jaidev Ramakrishna", title: "Web Developer", photo: "/jai.jpg", insta: "https://www.instagram.com/urwish.service?igsh=MWoxamFnc2tieWwzeQ==" }
-];
+import { Link } from 'react-router-dom';
 
 const About = () => {
   return (
-    <div className="flex-1 pt-24 pb-16 relative z-10 w-full max-w-7xl mx-auto">
+    <div className="w-full bg-[#f4f4f4] min-h-screen font-sans pt-[80px]">
       
-      <section className="max-w-3xl mx-auto px-5 text-center mb-24">
-        <h2 className="font-serif text-5xl font-normal mb-8 tracking-wide">Our Story</h2>
-        <span className="font-serif italic text-2xl text-gray-500 block mb-10">
-          "Crafted with Passion. Delivered with Purpose."
-        </span>
-        
-        <p className="text-gray-600 leading-loose mb-8 text-justify" style={{ textAlignLast: 'center' }}>
-          At Engineer Biryani, we believe that a hearty meal shouldn't come at the cost of your wallet—or the planet.
-          Born out of a simple idea to deliver authentic, flavorful biryani with zero waste and full satisfaction, we serve one goal: to make your Sunday lunch unforgettable.
-        </p>
-        
-        <p className="text-gray-600 leading-loose mb-8 text-justify" style={{ textAlignLast: 'center' }}>
-          We operate on a <strong className="text-black font-semibold">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday.
-          This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
-        </p>
-        
-        <ul className="text-left inline-block my-10 space-y-4">
-          <li className="text-gray-600 text-[15px] relative pl-8 before:content-['—'] before:absolute before:left-0 before:text-black before:font-bold">
-            Aromatic rice cooked with rich spices
-          </li>
-          <li className="text-gray-600 text-[15px] relative pl-8 before:content-['—'] before:absolute before:left-0 before:text-black before:font-bold">
-            Two juicy pieces of chicken
-          </li>
-          <li className="text-gray-600 text-[15px] relative pl-8 before:content-['—'] before:absolute before:left-0 before:text-black before:font-bold">
-            Accompanied by onion raita and pachadi
-          </li>
-          <li className="text-gray-600 text-[15px] relative pl-8 before:content-['—'] before:absolute before:left-0 before:text-black before:font-bold">
-            Free doorstep delivery
-          </li>
-        </ul>
-        
-        <p className="text-gray-600 leading-loose text-justify" style={{ textAlignLast: 'center' }}>
-          We’re not just serving food—we’re building a community of biryani lovers who appreciate taste, quantity, and value.
-          Why "Engineer Biryani"? Because like every great engineering solution, our model is smart, efficient, and built to serve.
-        </p>
-      </section>
-
-      <section className="bg-gray-50 py-20 px-5 text-center rounded-3xl mx-4">
-        <h2 className="font-serif text-4xl font-normal mb-14 tracking-wide">Meet Our Team</h2>
-        
-        <div className="flex flex-wrap justify-center gap-12 max-w-6xl mx-auto">
-          {teamData.map((member, index) => (
-            <div key={index} className="w-44 text-center group">
-              <div className="w-36 h-36 mx-auto rounded-full overflow-hidden mb-5 grayscale-[20%] transition duration-400 group-hover:grayscale-0 group-hover:scale-105 shadow-sm">
-                <img 
-                  src={member.photo} 
-                  alt={member.name} 
-                  className="w-full h-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150'; }}
-                />
-              </div>
-              <h3 className="font-serif text-[19px] font-normal text-gray-900 mb-1">{member.name}</h3>
-              <p className="text-[12px] text-gray-500 uppercase tracking-widest">{member.title}</p>
-              
-              <a href={member.insta} target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-gray-400 hover:text-black transition">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-              </a>
-            </div>
-          ))}
+      {/* INTRO HERO */}
+      <section className="min-h-[40vh] flex flex-col justify-center relative overflow-hidden text-center px-6">
+        <div className="relative z-10 max-w-3xl mx-auto py-16">
+          <span className="eyebrow mx-auto justify-center flex mb-6">ABOUT US</span>
+          <h1 className="text-4xl md:text-5xl font-[300] tracking-tight text-brand-text-dark mb-6">
+            Our Story
+          </h1>
+          <p className="text-[#888888] text-lg font-light tracking-wide">
+            Crafted with Passion. Delivered with Purpose.
+          </p>
         </div>
       </section>
-      
+
+      {/* OUR STORY SECTION */}
+      <section className="bg-white py-32 px-6 md:px-12">
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-16 mb-32">
+          <div className="w-full md:w-1/2">
+            <div className="aspect-[4/3] overflow-hidden">
+              <img 
+                src="/0faac298-d842-43ca-9176-497a2435f707.jpg" 
+                alt="Our Kitchen" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=800&auto=format&fit=crop';
+                }}
+              />
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 space-y-8">
+            <span className="eyebrow">OUR JOURNEY</span>
+            <h2 className="text-4xl font-[300] tracking-tight text-brand-text-dark">A Simple Idea</h2>
+            <div className="space-y-6 text-[#888888] font-light leading-relaxed">
+              <p>
+                At Engineer Biryani, we believe that a hearty meal shouldn't come at the cost of your wallet—or the planet.
+                Born out of a simple idea to deliver authentic, flavorful biryani with zero waste and full satisfaction, we serve one goal: to make your Sunday lunch unforgettable.
+              </p>
+              <p>
+                We operate on a <strong className="font-medium text-brand-text-dark">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday.
+                This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row-reverse items-center gap-16">
+          <div className="w-full md:w-1/2">
+            <div className="aspect-[4/3] overflow-hidden">
+              <img 
+                src="/Chicken-Biryani-Recipe.jpg" 
+                alt="Signature Dish" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=800&auto=format&fit=crop';
+                }}
+              />
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 space-y-8">
+            <span className="eyebrow">WHAT WE SERVE</span>
+            <h2 className="text-4xl font-[300] tracking-tight text-brand-text-dark">More Than Just Food</h2>
+            <ul className="space-y-4 mb-6 text-[#888888] font-light">
+              {[
+                'Aromatic rice cooked with rich spices',
+                'Two juicy pieces of chicken',
+                'Accompanied by onion raita and pachadi',
+                'Free doorstep delivery'
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <span className="text-brand-text-dark mt-1 text-[10px] uppercase tracking-widest font-bold border border-brand-text-dark px-1 rounded-sm">✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[#888888] font-light leading-relaxed">
+              We’re not just serving food—we’re building a community of biryani lovers who appreciate taste, quantity, and value.
+              Why "Engineer Biryani"? Because like every great engineering solution, our model is smart, efficient, and built to serve.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA BAND */}
+      <section className="bg-brand-cream py-32 px-6 md:px-12 text-center flex flex-col items-center border-t border-[#EFEFEF]">
+        <h2 className="text-3xl md:text-4xl font-[300] tracking-tight text-brand-text-dark mb-12">Hungry Yet?</h2>
+        <Link to="/checkout" className="text-xs tracking-[0.2em] font-medium uppercase border border-brand-text-dark text-brand-text-dark py-4 px-12 hover:bg-brand-text-dark hover:text-white transition-colors duration-300">
+          Order Now
+        </Link>
+      </section>
+
     </div>
   );
 };

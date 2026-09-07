@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Eye, Filter } from 'lucide-react';
+import { Search, Eye, Filter, Trash2, HardDrive } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
+  const [storageUsage, setStorageUsage] = useState<any>(null);
   
   const token = localStorage.getItem('adminToken');
   const navigate = useNavigate();
@@ -30,8 +31,38 @@ const AdminDashboard = () => {
         setLoading(false);
       }
     };
+
+    const fetchStorage = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/storage`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.data.success && response.data.data) {
+          setStorageUsage(response.data.data);
+        } else {
+          setStorageUsage('error');
+        }
+      } catch (err) {
+        console.error('Failed to fetch storage', err);
+        setStorageUsage('error');
+      }
+    };
+
     fetchOrders();
+    fetchStorage();
   }, [token, navigate]);
+
+  const handleDelete = async (orderId: string) => {
+    if (!window.confirm('Are you sure you want to delete this order? This will also remove the payment screenshot to free up space.')) return;
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setOrders(orders.filter(o => o.orderId !== orderId));
+    } catch (err) {
+      alert('Failed to delete order');
+    }
+  };
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
@@ -59,6 +90,80 @@ const AdminDashboard = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Orders Dashboard</h1>
       </div>
+
+      {/* Storage Widget */}
+      {storageUsage === null ? (
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-brand-orange/30 mb-6 flex justify-center items-center h-32">
+          <p className="text-gray-500">Loading Cloudinary storage details...</p>
+        </div>
+      ) : storageUsage === 'error' ? (
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-red-300 mb-6 flex justify-center items-center h-32 text-red-500">
+          <p>Failed to load Cloudinary Storage details. Please check your API keys or refresh.</p>
+        </div>
+      ) : (
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-brand-orange/30 mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-orange-50 rounded-full text-brand-orange">
+              <HardDrive size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800 leading-none">Storage & API Usage Details</h2>
+              <p className="text-sm text-gray-500 mt-1">Monitor your Cloudinary space to prevent limits. Delete old orders to free up space.</p>
+            </div>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+            <div className="flex justify-between items-end mb-2">
+              <div>
+                <span className="text-sm font-medium text-gray-600">Plan Usage (Credits)</span>
+              </div>
+              <div className="text-right">
+                <span className="text-xl font-bold text-gray-800">{storageUsage?.credits?.usage || 0}</span>
+                <span className="text-sm text-gray-500"> / {storageUsage?.credits?.limit || 25} credits</span>
+              </div>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1 overflow-hidden">
+              <div 
+                className={`h-2.5 rounded-full ${
+                  (storageUsage?.credits?.used_percent || 0) > 80 ? 'bg-red-500' : 'bg-brand-orange'
+                }`}
+                style={{ width: `${Math.min(storageUsage?.credits?.used_percent || 0, 100)}%` }}
+              ></div>
+            </div>
+            <p className="text-xs text-gray-500 text-right mt-1">{storageUsage?.credits?.used_percent || 0}% Used</p>
+            
+            {/* Detail numbers */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-200">
+              <div>
+                <p className="text-xs text-gray-500">Storage Used</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {storageUsage?.storage?.usage ? (storageUsage.storage.usage / (1024 * 1024)).toFixed(2) + ' MB' : '0 MB'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Bandwidth Used</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {storageUsage?.bandwidth?.usage ? (storageUsage.bandwidth.usage / (1024 * 1024)).toFixed(2) + ' MB' : '0 MB'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Transformations</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {storageUsage?.transformations?.usage || 0}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Current Plan</p>
+                <p className="text-sm font-semibold text-gray-800 capitalize">
+                  {storageUsage?.plan || 'Free'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Filters & Search */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row gap-4 justify-between">
@@ -131,12 +236,21 @@ const AdminDashboard = () => {
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
-                      <Link 
-                        to={`/admin/orders/${order.orderId}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 transition"
-                      >
-                        <Eye size={16} /> View
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link 
+                          to={`/admin/orders/${order.orderId}`}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 transition"
+                        >
+                          <Eye size={16} /> View
+                        </Link>
+                        <button 
+                          onClick={() => handleDelete(order.orderId)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded text-sm hover:bg-red-100 transition"
+                          title="Delete Order & Free Space"
+                        >
+                          <Trash2 size={16} /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

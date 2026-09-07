@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
+import { ShieldCheck, ChevronDown, CheckCircle2 } from 'lucide-react';
 
 const checkoutSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -58,162 +59,209 @@ const Checkout = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row max-w-6xl mx-auto w-full pt-28 pb-16 px-4 gap-8 relative z-10">
+    <div className="w-full bg-brand-cream min-h-screen">
       
-      {/* Checkout Form */}
-      <div className="flex-1 bg-white p-6 md:p-8 rounded-lg shadow-sm border border-gray-100">
-        <h2 className="font-serif text-3xl mb-6">Delivery Details</h2>
-        
-        {apiError && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-md mb-6 text-sm">
-            {apiError}
-          </div>
-        )}
-
-        <div className="mb-8">
-          <label className="block text-sm text-gray-600 mb-3">Select Option *</label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div 
-              onClick={() => setOptionType('600g')}
-              className={`border p-4 rounded-lg cursor-pointer transition ${optionType === '600g' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-semibold">600g Box</span>
-                <span className="font-bold">₹130</span>
-              </div>
-              <p className="text-sm text-gray-500">2 pieces chicken</p>
-            </div>
-            
-            <div 
-              onClick={() => setOptionType('1200g')}
-              className={`border p-4 rounded-lg cursor-pointer transition ${optionType === '1200g' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-semibold">1200g Bucket</span>
-                <span className="font-bold">₹250</span>
-              </div>
-              <p className="text-sm text-gray-500">3-4 pieces + Bread Halwa</p>
-            </div>
-          </div>
+      {/* PAGE HEADER */}
+      <section className="bg-brand-dark min-h-[30vh] flex flex-col justify-center pt-20 relative overflow-hidden text-center px-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent z-0"></div>
+        <div className="relative z-10 max-w-3xl mx-auto py-12">
+          <span className="eyebrow mx-auto justify-center flex mb-4">— Almost There —</span>
+          <h1 className="text-4xl md:text-[52px] font-serif font-bold text-white mb-4 leading-tight">
+            Secure Checkout
+          </h1>
+          <p className="text-brand-text-muted-light text-lg flex items-center justify-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-brand-orange" />
+            Fast, secure, and easy.
+          </p>
         </div>
+      </section>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Full Name *</label>
-            <input 
-              {...register('name')}
-              type="text" 
-              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:border-black transition"
-              placeholder="Arun Kumar"
-            />
-            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Phone Number *</label>
-            <input 
-              {...register('phone')}
-              type="tel" 
-              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:border-black transition"
-              placeholder="9876543210"
-            />
-            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Delivery Address *</label>
-            <textarea 
-              {...register('address')}
-              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:border-black transition min-h-[80px]"
-              placeholder="Flat No, Building, Street"
-            ></textarea>
-            {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Landmark (Optional)</label>
-            <input 
-              {...register('landmark')}
-              type="text" 
-              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:border-black transition"
-              placeholder="Near Apollo Hospital"
-            />
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-sm text-gray-600 mb-1">City *</label>
-              <input 
-                {...register('city')}
-                type="text" 
-                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:border-black transition"
-                placeholder="Coimbatore"
-              />
-              {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>}
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm text-gray-600 mb-1">Pincode *</label>
-              <input 
-                {...register('pincode')}
-                type="text" 
-                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:border-black transition"
-                placeholder="641001"
-              />
-              {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode.message}</p>}
-            </div>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full bg-black text-white py-4 mt-6 rounded-md font-semibold tracking-wider hover:bg-gray-800 transition uppercase text-sm disabled:bg-gray-400"
-          >
-            {isSubmitting ? 'Processing...' : 'Proceed to Payment'}
-          </button>
-        </form>
-      </div>
-
-      {/* Order Summary */}
-      <div className="md:w-[350px] w-full">
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-28">
-          <h3 className="font-serif text-2xl mb-6">Order Summary</h3>
+      {/* CHECKOUT CONTENT */}
+      <section className="py-16 px-6 md:px-12 bg-brand-cream relative z-10">
+        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-8">
           
-          <div className="flex justify-between items-start mb-4 text-sm">
-            <span className="text-gray-600 mt-1">Product:</span>
-            <div className="text-right">
-              <span className="font-medium block">{currentOption.name}</span>
-              <span className="text-xs text-gray-500 block">{currentOption.desc}</span>
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mb-4 text-sm">
-            <span className="text-gray-600">Quantity:</span>
-            <div className="flex items-center border border-gray-300 rounded-md bg-white">
-              <button 
-                type="button"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition"
-              >-</button>
-              <span className="px-3 py-1 font-medium border-x border-gray-300">{quantity}</span>
-              <button 
-                type="button"
-                onClick={() => setQuantity(quantity + 1)}
-                className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition"
-              >+</button>
+          {/* Checkout Form */}
+          <div className="w-full lg:w-7/12">
+            <div className="brand-card p-6 md:p-10 shadow-xl">
+              <h2 className="text-2xl font-serif font-bold text-brand-text-dark mb-8 pb-4 border-b border-brand-border-soft">Delivery Details</h2>
+              
+              {apiError && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-8 text-sm flex items-start gap-3">
+                  <div className="mt-0.5"><ShieldCheck className="w-4 h-4"/></div>
+                  <span>{apiError}</span>
+                </div>
+              )}
+
+              <div className="mb-10">
+                <label className="block text-sm font-bold text-brand-text-dark mb-4">Select Option</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div 
+                    onClick={() => setOptionType('600g')}
+                    className={`border-2 p-5 rounded-xl cursor-pointer transition-all relative overflow-hidden ${optionType === '600g' ? 'border-brand-orange bg-brand-orange/5' : 'border-brand-border-soft bg-white hover:border-brand-orange/50'}`}
+                  >
+                    {optionType === '600g' && <div className="absolute top-0 right-0 bg-brand-orange text-white rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-brand-text-dark">600g Box</span>
+                      <span className="font-serif font-bold text-xl text-brand-dark">₹130</span>
+                    </div>
+                    <p className="text-sm text-brand-text-muted-dark">2 pieces chicken</p>
+                  </div>
+                  
+                  <div 
+                    onClick={() => setOptionType('1200g')}
+                    className={`border-2 p-5 rounded-xl cursor-pointer transition-all relative overflow-hidden ${optionType === '1200g' ? 'border-brand-orange bg-brand-orange/5' : 'border-brand-border-soft bg-white hover:border-brand-orange/50'}`}
+                  >
+                    {optionType === '1200g' && <div className="absolute top-0 right-0 bg-brand-orange text-white rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-brand-text-dark">1200g Bucket</span>
+                      <span className="font-serif font-bold text-xl text-brand-dark">₹250</span>
+                    </div>
+                    <p className="text-sm text-brand-text-muted-dark">3-4 pieces + Bread Halwa</p>
+                  </div>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-brand-text-dark mb-2">Full Name</label>
+                    <input 
+                      {...register('name')}
+                      type="text" 
+                      className="w-full p-4 rounded-lg border border-brand-border-soft bg-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-shadow"
+                      placeholder="Arun Kumar"
+                    />
+                    {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-brand-text-dark mb-2">Phone Number</label>
+                    <input 
+                      {...register('phone')}
+                      type="tel" 
+                      className="w-full p-4 rounded-lg border border-brand-border-soft bg-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-shadow"
+                      placeholder="9876543210"
+                    />
+                    {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone.message}</p>}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-brand-text-dark mb-2">Delivery Address</label>
+                  <textarea 
+                    {...register('address')}
+                    className="w-full p-4 rounded-lg border border-brand-border-soft bg-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-shadow min-h-[100px] resize-y"
+                    placeholder="Flat No, Building, Street"
+                  ></textarea>
+                  {errors.address && <p className="text-red-500 text-xs mt-1 font-medium">{errors.address.message}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-brand-text-dark mb-2">Landmark <span className="text-brand-text-muted-dark font-normal">(Optional)</span></label>
+                  <input 
+                    {...register('landmark')}
+                    type="text" 
+                    className="w-full p-4 rounded-lg border border-brand-border-soft bg-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-shadow"
+                    placeholder="Near Apollo Hospital"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-brand-text-dark mb-2">City</label>
+                    <input 
+                      {...register('city')}
+                      type="text" 
+                      className="w-full p-4 rounded-lg border border-brand-border-soft bg-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-shadow"
+                      placeholder="Coimbatore"
+                    />
+                    {errors.city && <p className="text-red-500 text-xs mt-1 font-medium">{errors.city.message}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-brand-text-dark mb-2">Pincode</label>
+                    <input 
+                      {...register('pincode')}
+                      type="text" 
+                      className="w-full p-4 rounded-lg border border-brand-border-soft bg-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-shadow"
+                      placeholder="641001"
+                    />
+                    {errors.pincode && <p className="text-red-500 text-xs mt-1 font-medium">{errors.pincode.message}</p>}
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-brand-border-soft">
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full btn-primary flex justify-center items-center h-14 text-base"
+                  >
+                    {isSubmitting ? 'Processing...' : 'Proceed to Payment'}
+                  </button>
+                  <p className="text-center text-xs text-brand-text-muted-dark mt-4 flex items-center justify-center gap-1">
+                    <ShieldCheck className="w-4 h-4 text-brand-orange" /> Secure encrypted checkout
+                  </p>
+                </div>
+              </form>
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-6 text-sm">
-            <span className="text-gray-600">Price:</span>
-            <span className="font-medium">₹{currentOption.price} × {quantity}</span>
+          {/* Order Summary */}
+          <div className="w-full lg:w-5/12">
+            <div className="brand-card p-6 md:p-8 sticky top-28 bg-[#EFE6D8] border border-brand-border-soft/50 shadow-lg">
+              <h3 className="text-2xl font-serif font-bold text-brand-text-dark mb-6 pb-4 border-b border-brand-border-soft/60">Order Summary</h3>
+              
+              <div className="space-y-6">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex-1">
+                    <span className="font-bold text-brand-text-dark block mb-1">{currentOption.name}</span>
+                    <span className="text-sm text-brand-text-muted-dark">{currentOption.desc}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-brand-text-dark block">₹{currentOption.price}</span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-brand-border-soft">
+                  <span className="text-sm font-bold text-brand-text-dark pl-3">Quantity</span>
+                  <div className="flex items-center">
+                    <button 
+                      type="button"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-brand-text-dark hover:bg-brand-cream transition-colors"
+                    >-</button>
+                    <span className="w-8 text-center font-bold text-brand-text-dark">{quantity}</span>
+                    <button 
+                      type="button"
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-brand-text-dark hover:bg-brand-cream transition-colors"
+                    >+</button>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-brand-border-soft/60 space-y-3">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-brand-text-muted-dark font-medium">Subtotal</span>
+                    <span className="font-bold text-brand-text-dark">₹{totalAmount}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-brand-text-muted-dark font-medium">Delivery</span>
+                    <span className="font-bold text-brand-orange">Calculated at next step</span>
+                  </div>
+                </div>
+                
+                <div className="pt-6 border-t border-brand-border-soft/60 flex justify-between items-end">
+                  <div>
+                    <span className="block font-bold text-brand-text-dark text-sm mb-1">Total Payable</span>
+                    <span className="block text-xs text-brand-text-muted-dark">Incl. of all taxes</span>
+                  </div>
+                  <span className="font-serif font-bold text-4xl text-brand-dark">₹{totalAmount}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
-            <span className="font-semibold text-lg">Total:</span>
-            <span className="font-bold text-xl">₹{totalAmount}</span>
-          </div>
+
         </div>
-      </div>
+      </section>
 
     </div>
   );

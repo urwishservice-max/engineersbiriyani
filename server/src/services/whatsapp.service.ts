@@ -57,3 +57,101 @@ Screenshot: ${order.payment.screenshotUrl}
     return false;
   }
 };
+
+export const sendPaymentConfirmedNotification = async (order: IOrder): Promise<boolean> => {
+  try {
+    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+    const customerPhone = order.customer.phone.replace(/\D/g, ''); // Remove non-digits
+
+    if (!phoneNumberId || !accessToken || !customerPhone) {
+      console.log('WhatsApp credentials not configured or customer phone missing. Skipping notification.');
+      return false;
+    }
+
+    // Ensure phone has country code (assume 91 for India if exactly 10 digits)
+    const formattedPhone = customerPhone.length === 10 ? `91${customerPhone}` : customerPhone;
+
+    const messageText = `
+Hi ${order.customer.name},
+
+Your payment of ₹${order.payment.amount} for Order #${order.orderId} has been successfully VERIFIED! ✅
+
+We are preparing your ${order.product.name} with love. We'll let you know once it's out for delivery.
+
+Thank you for choosing Engineer's Biriyani! 🍲
+    `.trim();
+
+    const response = await axios.post(
+      `https://graph.facebook.com/v17.0/${phoneNumberId}/messages`,
+      {
+        messaging_product: 'whatsapp',
+        to: formattedPhone,
+        type: 'text',
+        text: { body: messageText },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('WhatsApp payment confirmed notification sent:', response.data.messages[0].id);
+    return true;
+  } catch (error: any) {
+    console.error('WhatsApp Payment Notification Error:', error.response?.data || error.message);
+    return false;
+  }
+};
+
+export const sendOutForDeliveryNotification = async (order: IOrder): Promise<boolean> => {
+  try {
+    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+    const customerPhone = order.customer.phone.replace(/\D/g, ''); // Remove non-digits
+
+    if (!phoneNumberId || !accessToken || !customerPhone) {
+      console.log('WhatsApp credentials not configured or customer phone missing. Skipping notification.');
+      return false;
+    }
+
+    // Ensure phone has country code (assume 91 for India if exactly 10 digits)
+    const formattedPhone = customerPhone.length === 10 ? `91${customerPhone}` : customerPhone;
+
+    const messageText = `
+Hi ${order.customer.name},
+
+Great news! Your Order #${order.orderId} is OUT FOR DELIVERY! 🚀
+
+Our delivery partner is on the way to:
+${order.customer.address}, ${order.customer.city}
+
+Get ready to enjoy your piping hot biriyani! 🍽️
+    `.trim();
+
+    const response = await axios.post(
+      `https://graph.facebook.com/v17.0/${phoneNumberId}/messages`,
+      {
+        messaging_product: 'whatsapp',
+        to: formattedPhone,
+        type: 'text',
+        text: { body: messageText },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('WhatsApp delivery notification sent:', response.data.messages[0].id);
+    return true;
+  } catch (error: any) {
+    console.error('WhatsApp Delivery Notification Error:', error.response?.data || error.message);
+    return false;
+  }
+};
+

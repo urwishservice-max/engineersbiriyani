@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Trash2, MessageCircle } from 'lucide-react';
 
 const AdminOrderDetails = () => {
   const { orderId } = useParams();
@@ -11,6 +11,8 @@ const AdminOrderDetails = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showRejectInput, setShowRejectInput] = useState(false);
+  const [isNotifying, setIsNotifying] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const token = localStorage.getItem('adminToken');
 
@@ -83,16 +85,56 @@ const AdminOrderDetails = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this order? This cannot be undone and will free up storage space.')) return;
+    
+    setIsDeleting(true);
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      navigate('/admin/orders');
+    } catch (err) {
+      alert('Failed to delete order');
+      setIsDeleting(false);
+    }
+  };
+
+  const sendNotification = async (type: 'payment' | 'delivery') => {
+    setIsNotifying(true);
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/notify/${type}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        alert(`${type === 'payment' ? 'Payment' : 'Delivery'} notification sent successfully!`);
+      }
+    } catch (err) {
+      alert(`Failed to send ${type} notification. Check API keys and WhatsApp limits.`);
+    } finally {
+      setIsNotifying(false);
+    }
+  };
+
   if (loading) return <div className="p-6">Loading...</div>;
   if (!order) return <div className="p-6">Order not found</div>;
 
   return (
     <div>
-      <div className="mb-6 flex items-center gap-4">
-        <Link to="/admin/orders" className="p-2 hover:bg-gray-200 rounded-full transition">
-          <ArrowLeft size={20} />
-        </Link>
-        <h1 className="text-2xl font-semibold">Order Details: {order.orderId}</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link to="/admin/orders" className="p-2 hover:bg-gray-200 rounded-full transition">
+            <ArrowLeft size={20} />
+          </Link>
+          <h1 className="text-2xl font-semibold">Order Details: {order.orderId}</h1>
+        </div>
+        <button 
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-red-100 transition border border-red-200"
+        >
+          <Trash2 size={16} /> Delete Order
+        </button>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -163,6 +205,33 @@ const AdminOrderDetails = () => {
                   {status}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-lg font-semibold mb-4 border-b border-gray-100 pb-2 flex items-center gap-2">
+              <MessageCircle size={18} /> Customer Notifications
+            </h2>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => sendNotification('payment')}
+                disabled={isNotifying}
+                className="w-full flex items-center justify-between px-4 py-3 bg-[#25D366]/10 text-[#075E54] border border-[#25D366]/30 rounded-md font-medium hover:bg-[#25D366]/20 transition"
+              >
+                <span>Send "Payment Confirmed" WhatsApp</span>
+                <MessageCircle size={18} />
+              </button>
+              <button
+                onClick={() => sendNotification('delivery')}
+                disabled={isNotifying}
+                className="w-full flex items-center justify-between px-4 py-3 bg-[#25D366]/10 text-[#075E54] border border-[#25D366]/30 rounded-md font-medium hover:bg-[#25D366]/20 transition"
+              >
+                <span>Send "Out For Delivery" WhatsApp</span>
+                <MessageCircle size={18} />
+              </button>
+              <p className="text-xs text-gray-500 mt-2">
+                * Note: WhatsApp messages will only be delivered if the customer has engaged with your business account within 24hrs, or if you are using pre-approved template messages.
+              </p>
             </div>
           </div>
         </div>
