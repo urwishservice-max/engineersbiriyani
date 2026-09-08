@@ -4,8 +4,8 @@ import { ShoppingCart, Search } from 'lucide-react';
 
 const menuItems = [
   { id: 1, category: 'Biryani', name: 'Special Chicken Biryani', price: '₹250', desc: 'Aromatic basmati rice cooked with tender chicken pieces, authentic spices, and our signature masala.', img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=400&auto=format&fit=crop', badge: 'Bestseller' },
-  { id: 2, category: 'Sides', name: 'Onion Raita', price: 'Included', desc: 'Cool yogurt mixed with crunchy onions and mild spices. Served fresh with every biryani.', img: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c4?w=400&q=80' },
-  { id: 3, category: 'Sides', name: 'Kathirikai (Brinjal Curry)', price: 'Included', desc: 'Traditional authentic South Indian tangy brinjal gravy. The perfect accompaniment.', img: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80' },
+  { id: 2, category: 'Sides', name: 'Onion Raita', price: 'Included', desc: 'Cool yogurt mixed with crunchy onions and mild spices. Served fresh with every biryani.', img: '/raita.jpg' },
+  { id: 3, category: 'Sides', name: 'Kathirikai (Brinjal Curry)', price: 'Included', desc: 'Traditional authentic South Indian tangy brinjal gravy. The perfect accompaniment.', img: '/kathirikai.jpg' },
 ];
 
 const categories = ['All', 'Biryani', 'Sides'];
