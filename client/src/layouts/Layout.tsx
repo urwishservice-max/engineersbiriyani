@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Facebook, Twitter, Instagram, Send, CreditCard, Menu as MenuIcon, Search } from 'lucide-react';
+import { ShoppingCart, Facebook, Twitter, Instagram, Send, CreditCard, Menu as MenuIcon, Search, X } from 'lucide-react';
 
 const Layout = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const [scrolled, setScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,7 +16,7 @@ const Layout = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isScrolledStyle = scrolled ? 'bg-brand-cream text-brand-text-dark shadow-sm border-b border-brand-border-soft/50' : 'bg-transparent text-brand-text-dark';
+  const isScrolledStyle = (scrolled || isMobileMenuOpen) ? 'bg-brand-cream text-brand-text-dark shadow-sm border-b border-brand-border-soft/50' : 'bg-transparent text-brand-text-dark';
 
   return (
     <div className="flex flex-col min-h-screen font-sans bg-brand-cream text-brand-text-dark">
@@ -26,8 +27,11 @@ const Layout = () => {
           <Link to="/" className="flex items-center">
             <img src="/logo.png" alt="Engineer's Biriyani" className="h-12 w-auto object-contain" />
           </Link>
-          <button className="text-brand-text-dark hover:text-brand-orange transition-colors">
-            <MenuIcon className="w-6 h-6 stroke-[1.5]" />
+          <button 
+            className="text-brand-text-dark hover:text-brand-orange transition-colors md:hidden"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6 stroke-[1.5]" /> : <MenuIcon className="w-6 h-6 stroke-[1.5]" />}
           </button>
         </div>
 
@@ -66,6 +70,35 @@ const Layout = () => {
           </Link>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={`fixed inset-0 z-40 bg-brand-cream flex flex-col items-center justify-center transition-all duration-300 md:hidden ${
+          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <nav className="flex flex-col gap-8 text-center">
+          {[
+            { name: 'HOME', path: '/' },
+            { name: 'ABOUT', path: '/about' },
+            { name: 'MENU', path: '/menu' },
+            { name: 'CONTACT', path: '/contact' },
+          ].map((link) => (
+            <Link 
+              key={link.path} 
+              to={link.path} 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`text-2xl font-light tracking-[0.2em] transition-colors ${
+                isActive(link.path) 
+                  ? 'text-brand-text-dark border-b-2 border-brand-text-dark pb-1 inline-block' 
+                  : 'text-[#888888] hover:text-brand-text-dark'
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">

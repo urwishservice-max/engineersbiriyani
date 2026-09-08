@@ -42,6 +42,12 @@ const Home = () => {
             <h1 className="text-[12vw] md:text-[10vw] font-[200] tracking-tight text-brand-text-dark whitespace-nowrap">
               Authentic <span className="text-gradient-orange">Biriyani</span>
             </h1>
+            <Link 
+              to="/admin" 
+              className="mt-8 z-20 text-xs tracking-[0.2em] font-medium uppercase border border-brand-text-dark text-brand-text-dark py-4 px-12 hover:bg-brand-text-dark hover:text-white transition-colors duration-300 relative bg-brand-cream/80 backdrop-blur-sm"
+            >
+              Admin Page
+            </Link>
           </motion.div>
           
           <motion.div style={{ y: imageY }} className="absolute z-10 flex items-center justify-center pointer-events-none w-full max-w-[280px] md:max-w-[350px] aspect-square">
