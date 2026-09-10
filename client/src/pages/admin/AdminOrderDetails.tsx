@@ -11,7 +11,6 @@ const AdminOrderDetails = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showRejectInput, setShowRejectInput] = useState(false);
-  const [isNotifying, setIsNotifying] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
   const token = localStorage.getItem('adminToken');
@@ -100,20 +99,16 @@ const AdminOrderDetails = () => {
     }
   };
 
-  const sendNotification = async (type: 'payment' | 'delivery') => {
-    setIsNotifying(true);
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/notify/${type}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.data.success) {
-        alert(`${type === 'payment' ? 'Payment' : 'Delivery'} notification sent successfully!`);
-      }
-    } catch (err) {
-      alert(`Failed to send ${type} notification. Check API keys and WhatsApp limits.`);
-    } finally {
-      setIsNotifying(false);
+  const getWhatsAppLink = (type: 'payment' | 'delivery') => {
+    if (!order || !order.customer || !order.customer.phone) return '#';
+    const phone = `91${order.customer.phone}`;
+    let text = '';
+    if (type === 'payment') {
+      text = `Hi ${order.customer.name},\nYour payment of ₹${order.product.totalAmount} for order ${order.orderId} has been verified and confirmed! 🟢\nWe are preparing your Engineer's Biriyani.`;
+    } else {
+      text = `Hi ${order.customer.name},\nGreat news! Your order ${order.orderId} is Out for Delivery! 🛵\nGet ready to enjoy your Engineer's Biriyani.`;
     }
+    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
   };
 
   if (loading) return <div className="p-6">Loading...</div>;
@@ -213,24 +208,26 @@ const AdminOrderDetails = () => {
               <MessageCircle size={18} /> Customer Notifications
             </h2>
             <div className="flex flex-col gap-3">
-              <button
-                onClick={() => sendNotification('payment')}
-                disabled={isNotifying}
+              <a
+                href={getWhatsAppLink('payment')}
+                target="_blank"
+                rel="noreferrer"
                 className="w-full flex items-center justify-between px-4 py-3 bg-[#25D366]/10 text-[#075E54] border border-[#25D366]/30 rounded-md font-medium hover:bg-[#25D366]/20 transition"
               >
                 <span>Send "Payment Confirmed" WhatsApp</span>
                 <MessageCircle size={18} />
-              </button>
-              <button
-                onClick={() => sendNotification('delivery')}
-                disabled={isNotifying}
+              </a>
+              <a
+                href={getWhatsAppLink('delivery')}
+                target="_blank"
+                rel="noreferrer"
                 className="w-full flex items-center justify-between px-4 py-3 bg-[#25D366]/10 text-[#075E54] border border-[#25D366]/30 rounded-md font-medium hover:bg-[#25D366]/20 transition"
               >
                 <span>Send "Out For Delivery" WhatsApp</span>
                 <MessageCircle size={18} />
-              </button>
+              </a>
               <p className="text-xs text-gray-500 mt-2">
-                * Note: WhatsApp messages will only be delivered if the customer has engaged with your business account within 24hrs, or if you are using pre-approved template messages.
+                * Note: This will open WhatsApp directly on your device with a pre-filled message.
               </p>
             </div>
           </div>

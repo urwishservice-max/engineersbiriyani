@@ -4,99 +4,107 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --background: 0 0% 0%;
+    --foreground: 43 100% 50%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 43 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 43 100% 50%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 43 100% 50%;
     --radius: 0.5rem;
 
-    /* Global Design System Tokens */
-    --brand-bg-dark: #111111;
-    --brand-bg-cream: #F4F4F4;
-    --brand-accent-orange: #E8622C;
-    --brand-accent-orange-hover: #D1531F;
-    --brand-text-dark: #1A1A1A;
-    --brand-text-light: #FFFFFF;
-    --brand-text-muted-dark: #888888;
-    --brand-text-muted-light: #DDDDDD;
-    --brand-border-soft: #EFEFEF;
+    /* Global Black & Amber (Yellow-Orange) Design System Tokens */
+    --brand-bg-dark: #000000;
+    --brand-bg-cream: #050505;
+    --brand-card-bg: #121212;
+    --brand-accent-orange: #FFB800; /* Warm Golden Yellow-Orange */
+    --brand-accent-orange-hover: #E0A000;
+    --brand-text-dark: #FFB800; /* Major Titles & Headings = Amber */
+    --brand-text-orange: #FFB800;
+    --brand-text-light: #FFFFFF; /* Small / Body text = White */
+    --brand-text-muted-dark: #FFFFFF;
+    --brand-text-muted-light: #E4E4E7;
+    --brand-border-soft: #27272A;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 0 0% 0%;
+    --foreground: 43 100% 50%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 43 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 43 100% 50%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 43 100% 50%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-[#27272A];
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-black text-white font-sans;
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-light tracking-tight;
+    @apply font-sans tracking-tight;
+    color: #FFB800;
   }
 }
 
 @layer components {
   /* Global Design System Typography Utilities */
   .eyebrow {
-    @apply text-[0.75rem] uppercase tracking-[0.2em] text-[#888888] font-medium mb-4 block;
+    @apply text-[0.75rem] uppercase tracking-[0.2em] text-[#FFB800] font-semibold mb-4 block;
   }
 
   .text-gradient-orange {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#E8622C] to-[#fad0c4];
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FFC107] via-[#FFB800] to-[#FFA000];
   }
   
   /* Buttons */
   .btn-primary {
-    @apply rounded-full bg-[var(--brand-accent-orange)] text-white py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-[var(--brand-accent-orange-hover)] hover:shadow-md inline-flex items-center justify-center gap-2;
+    @apply rounded-full bg-[#FFB800] text-black py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-bold text-[15px] md:text-[16px] transition-all hover:bg-[#E0A000] hover:shadow-[0_0_25px_rgba(255,184,0,0.4)] inline-flex items-center justify-center gap-2 cursor-pointer;
   }
   
   .btn-secondary {
-    @apply rounded-full bg-transparent border-[1.5px] border-[var(--brand-accent-orange)] text-[var(--brand-accent-orange)] py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-[var(--brand-accent-orange)] hover:text-white inline-flex items-center justify-center gap-2;
+    @apply rounded-full bg-transparent border-[1.5px] border-[#FFB800] text-[#FFB800] py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-[#FFB800] hover:text-black inline-flex items-center justify-center gap-2 cursor-pointer;
   }
   
   .btn-secondary-light {
-    @apply rounded-full bg-transparent border-[1.5px] border-white text-white py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-white hover:text-[var(--brand-text-dark)] inline-flex items-center justify-center gap-2;
+    @apply rounded-full bg-transparent border-[1.5px] border-white text-white py-[14px] px-[28px] md:py-[16px] md:px-[32px] font-semibold text-[15px] md:text-[16px] transition-all hover:bg-white hover:text-black inline-flex items-center justify-center gap-2 cursor-pointer;
   }
 
   /* Cards */
   .brand-card {
-    @apply rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden;
+    @apply rounded-2xl bg-[#121212] border border-[#27272A] text-white shadow-[0_8px_30px_rgba(0,0,0,0.8)] overflow-hidden;
   }
 }
+
+
+

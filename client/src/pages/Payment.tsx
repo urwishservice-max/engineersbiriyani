@@ -24,7 +24,6 @@ const Payment = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   
-  // Realistically this would be from backend config
   const upiId = 'business@upi';
 
   useEffect(() => {
@@ -53,13 +52,11 @@ const Payment = () => {
     setError('');
     
     if (selectedFile) {
-      // Validate file type
       if (!['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(selectedFile.type)) {
         setError('Please upload a valid image file (JPG, PNG, WebP)');
         return;
       }
       
-      // Validate file size (max 5MB)
       if (selectedFile.size > 5 * 1024 * 1024) {
         setError('Image size must be less than 5MB');
         return;
@@ -101,65 +98,64 @@ const Payment = () => {
   };
 
   if (loading) {
-    return <div className="flex-1 flex justify-center items-center pt-28">Loading payment details...</div>;
+    return <div className="flex-1 flex justify-center items-center pt-28 bg-black text-[#FFB800] font-bold">Loading payment details...</div>;
   }
 
   if (!order) {
-    return <div className="flex-1 flex justify-center items-center pt-28 text-red-500">{error}</div>;
+    return <div className="flex-1 flex justify-center items-center pt-28 text-red-500 font-bold bg-black">{error}</div>;
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center pt-28 pb-16 px-4 w-full">
-      <h1 className="font-serif text-4xl mb-4">Payment Required</h1>
+    <div className="flex-1 flex flex-col items-center pt-28 pb-16 px-4 w-full bg-black text-white min-h-screen">
+      <h1 className="text-4xl font-bold mb-4 text-[#FFB800]">Payment Required</h1>
       
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm w-full max-w-xl p-8 mt-6">
-        <div className="text-center mb-8">
-          <p className="text-gray-500 text-sm mb-1">Order ID</p>
-          <p className="font-mono text-lg font-semibold">{order.orderId}</p>
+      <div className="brand-card w-full max-w-xl p-8 mt-4 border border-[#FFB800]/40 shadow-[0_0_35px_rgba(255,107,0,0.15)] bg-[#121212]">
+        <div className="text-center mb-8 pb-6 border-b border-[#27272A]">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Order ID</p>
+          <p className="font-mono text-xl font-bold text-white">{order.orderId}</p>
         </div>
         
-        <div className="bg-gray-50 p-6 rounded-md mb-8 text-center border border-gray-100">
-          <p className="text-gray-500 mb-2">Amount to Pay</p>
-          <p className="text-4xl font-bold text-black">₹{order.payment.amount}</p>
+        <div className="bg-[#18181B] p-6 rounded-2xl mb-8 text-center border border-[#27272A]">
+          <p className="text-gray-300 text-sm mb-1">Total Amount to Pay</p>
+          <p className="text-4xl font-bold text-[#FFB800]">₹{order.payment.amount}</p>
         </div>
         
         <div className="flex flex-col items-center mb-10">
-          <h2 className="font-semibold text-lg mb-4 uppercase tracking-wider">Scan & Pay</h2>
+          <h2 className="font-bold text-lg mb-4 uppercase tracking-wider text-[#FFB800]">Scan & Pay via UPI</h2>
           
-          {/* We are using the uploaded qr.jpeg from frontend/public */}
-          <div className="w-48 h-48 border-2 border-gray-200 rounded-lg p-2 mb-4 bg-white flex items-center justify-center overflow-hidden">
+          <div className="w-52 h-52 border-2 border-[#FFB800] rounded-2xl p-3 mb-4 bg-white flex items-center justify-center shadow-lg">
             <img src="/qr.jpeg" alt="UPI QR Code" className="w-full h-full object-contain" />
           </div>
           
           <div className="text-center">
-            <p className="text-gray-500 text-sm">UPI ID:</p>
-            <p className="font-medium text-lg bg-gray-100 px-4 py-2 rounded-md mt-1 select-all">{upiId}</p>
+            <p className="text-gray-400 text-xs uppercase tracking-wider">UPI ID:</p>
+            <p className="font-bold text-lg bg-[#18181B] border border-[#27272A] text-[#FFB800] px-5 py-2 rounded-xl mt-1 select-all">{upiId}</p>
           </div>
         </div>
         
-        <div className="border-t border-gray-200 pt-8">
-          <h3 className="font-semibold mb-4 text-center">Payment Instructions</h3>
-          <ol className="list-decimal list-inside text-gray-600 text-sm space-y-2 mb-8">
-            <li>Open Google Pay / PhonePe / Paytm / BHIM or another UPI app.</li>
+        <div className="border-t border-[#27272A] pt-8">
+          <h3 className="font-bold mb-4 text-center text-[#FFB800] uppercase tracking-wider">Payment Instructions</h3>
+          <ol className="list-decimal list-inside text-white text-sm space-y-2.5 mb-8 bg-[#18181B] p-5 rounded-xl border border-[#27272A]">
+            <li>Open Google Pay / PhonePe / Paytm / BHIM or any UPI app.</li>
             <li>Scan the QR code or use the UPI ID above.</li>
-            <li>Pay exactly <strong>₹{order.payment.amount}</strong>.</li>
-            <li>Complete the payment and take a screenshot.</li>
-            <li>Upload the screenshot below.</li>
+            <li>Pay exactly <strong className="text-[#FFB800]">₹{order.payment.amount}</strong>.</li>
+            <li>Complete the transaction & take a screenshot.</li>
+            <li>Upload the payment screenshot below.</li>
           </ol>
           
-          <div className="bg-yellow-50 text-yellow-800 p-4 rounded-md text-sm text-center mb-8 flex items-center justify-center gap-2">
-            <span className="font-semibold">Note:</span> Your order will be confirmed only after payment is manually verified.
+          <div className="bg-[#FFB800]/10 text-[#FFB800] border border-[#FFB800]/30 p-4 rounded-xl text-sm text-center mb-8 flex items-center justify-center gap-2 font-medium">
+            <span>Note: Your order will be confirmed immediately after payment screenshot verification.</span>
           </div>
           
           {/* Upload Section */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Upload Payment Screenshot</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">Upload Payment Screenshot</label>
             
             {!preview ? (
-              <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition">
-                <UploadCloud className="text-gray-400 mb-3" size={32} />
-                <span className="text-sm text-gray-600">Click to upload JPG, PNG, or WebP</span>
-                <span className="text-xs text-gray-400 mt-1">Max size: 5MB</span>
+              <label className="border-2 border-dashed border-[#FFB800]/60 hover:border-[#FFB800] bg-[#18181B] rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition">
+                <UploadCloud className="text-[#FFB800] mb-3" size={36} />
+                <span className="text-sm text-white font-medium">Click to upload screenshot (JPG, PNG, WebP)</span>
+                <span className="text-xs text-gray-400 mt-1">Maximum file size: 5MB</span>
                 <input 
                   type="file" 
                   className="hidden" 
@@ -168,38 +164,34 @@ const Payment = () => {
                 />
               </label>
             ) : (
-              <div className="border border-gray-200 rounded-lg p-4">
+              <div className="border border-[#27272A] rounded-2xl p-4 bg-[#18181B]">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
-                    <CheckCircle size={16} /> Screenshot selected
+                  <div className="flex items-center gap-2 text-green-400 text-sm font-bold">
+                    <CheckCircle size={18} /> Screenshot selected
                   </div>
                   <button 
                     onClick={() => { setFile(null); setPreview(null); }}
-                    className="text-gray-500 hover:text-red-500 transition text-sm flex items-center gap-1"
+                    className="text-gray-400 hover:text-red-400 transition text-xs font-bold flex items-center gap-1"
                   >
                     <XCircle size={16} /> Remove
                   </button>
                 </div>
-                <div className="bg-gray-50 flex justify-center p-2 rounded-md">
+                <div className="bg-black flex justify-center p-3 rounded-xl border border-[#27272A]">
                   <img src={preview} alt="Screenshot Preview" className="max-h-48 object-contain" />
                 </div>
-                <p className="text-xs text-gray-500 mt-2 text-center">{file?.name} ({(file!.size / 1024 / 1024).toFixed(2)} MB)</p>
+                <p className="text-xs text-gray-400 mt-2 text-center">{file?.name} ({(file!.size / 1024 / 1024).toFixed(2)} MB)</p>
               </div>
             )}
             
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            {error && <p className="text-red-400 text-sm mt-2 font-medium">{error}</p>}
           </div>
           
           <button 
             onClick={handleUpload}
             disabled={!file || isUploading}
-            className="w-full bg-black text-white py-4 rounded-md font-semibold tracking-wider hover:bg-gray-800 transition uppercase text-sm disabled:bg-gray-400 flex justify-center items-center gap-2"
+            className="w-full btn-primary py-4 text-base tracking-wider disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
           >
-            {isUploading ? (
-              <>Uploading...</>
-            ) : (
-              <>Submit Payment Screenshot</>
-            )}
+            {isUploading ? 'Uploading Screenshot...' : 'Submit Payment Screenshot'}
           </button>
         </div>
       </div>
@@ -208,3 +200,4 @@ const Payment = () => {
 };
 
 export default Payment;
+

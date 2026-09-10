@@ -23,63 +23,66 @@ const OrderSuccess = () => {
   }, [orderId]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center pt-28 pb-16 px-4">
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm w-full max-w-lg p-10 text-center">
+    <div className="flex-1 flex flex-col items-center justify-center pt-28 pb-16 px-4 bg-black text-white min-h-screen">
+      <div className="brand-card w-full max-w-lg p-10 text-center border border-[#FFB800]/40 shadow-[0_0_40px_rgba(255,107,0,0.15)] bg-[#121212]">
         <div className="flex justify-center mb-6">
-          <CheckCircle className="text-green-500 w-20 h-20" />
+          <CheckCircle className="text-[#FFB800] w-20 h-20 animate-bounce" />
         </div>
         
-        <h1 className="font-serif text-3xl mb-4">Payment Screenshot Submitted</h1>
+        <h1 className="text-3xl font-bold mb-4 text-[#FFB800]">Payment Screenshot Submitted</h1>
         
-        <p className="text-gray-600 mb-8">
+        <p className="text-white mb-8 text-sm leading-relaxed">
           Your order has been received and is waiting for payment verification.
         </p>
         
         {order && (
-          <div className="bg-gray-50 p-6 rounded-md mb-8 text-left border border-gray-100">
-            <div className="flex justify-between mb-3">
-              <span className="text-gray-500">Order ID:</span>
-              <span className="font-mono font-medium">{order.orderId}</span>
+          <div className="bg-[#18181B] p-6 rounded-2xl mb-8 text-left border border-[#27272A] space-y-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Order ID:</span>
+              <span className="font-mono font-bold text-white">{order.orderId}</span>
             </div>
-            <div className="flex justify-between mb-3">
-              <span className="text-gray-500">Customer:</span>
-              <span className="font-medium">{order.customer.name}</span>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Customer:</span>
+              <span className="font-bold text-white">{order.customer.name}</span>
             </div>
-            <div className="flex justify-between mb-3">
-              <span className="text-gray-500">Product:</span>
-              <span className="font-medium">{order.product.name} × {order.product.quantity}</span>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Product:</span>
+              <span className="font-bold text-white">{order.product.name} × {order.product.quantity}</span>
             </div>
-            <div className="flex justify-between pt-3 border-t border-gray-200 mt-3">
-              <span className="text-gray-700 font-semibold">Total Amount:</span>
-              <span className="font-bold">₹{order.payment.amount}</span>
+            <div className="flex justify-between pt-3 border-t border-[#27272A] mt-3">
+              <span className="text-gray-300 font-bold">Total Amount:</span>
+              <span className="font-bold text-xl text-[#FFB800]">₹{order.payment.amount}</span>
             </div>
           </div>
         )}
         
-        <div className="bg-blue-50 text-blue-800 p-4 rounded-md text-sm mb-8">
-          We will confirm your order after verifying the payment. You will receive an update once it is verified.
+        <div className="bg-[#FFB800]/10 border border-[#FFB800]/30 text-[#FFB800] p-4 rounded-xl text-sm mb-8 font-medium">
+          We will confirm your order after verifying your payment. You will receive an update shortly.
         </div>
         
-        <Link 
-          to={`/order/${orderId}`}
-          className="inline-block w-full bg-black text-white py-4 rounded-md font-semibold tracking-wider hover:bg-gray-800 transition uppercase text-sm mb-4"
-        >
-          Track Order Status
-        </Link>
-        
-        {order && (
-          <a
-            href={`https://wa.me/918870877407?text=${encodeURIComponent(`Hello Engineer's Biriyani, I have placed an order (ID: ${order.orderId}) for ${order.product.name} (Qty: ${order.product.quantity}). Total: ₹${order.payment.amount}. I have uploaded my payment screenshot on the website. Please verify my payment.`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block w-full bg-green-500 text-white py-4 flex items-center justify-center rounded-md font-semibold tracking-wider hover:bg-green-600 transition uppercase text-sm"
+        <div className="space-y-4">
+          <Link 
+            to={`/order/${orderId}`}
+            className="btn-primary w-full py-4 text-center block text-sm"
           >
-            Notify via WhatsApp
-          </a>
-        )}
+            Track Order Status
+          </Link>
+          
+          {order && (
+            <a
+              href={`https://wa.me/918870877407?text=${encodeURIComponent(`Hello Engineer's Biriyani, I have placed an order (ID: ${order.orderId}) for ${order.product.name} (Qty: ${order.product.quantity}). Total: ₹${order.payment.amount}. I have uploaded my payment screenshot on the website. Please verify my payment.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary w-full py-4 text-center block text-sm border-green-500 text-green-400 hover:bg-green-500 hover:text-black"
+            >
+              Notify via WhatsApp
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default OrderSuccess;
+

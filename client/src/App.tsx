@@ -38,6 +38,7 @@ function App() {
           <Route path="payment/:orderId" element={<Payment />} />
           <Route path="order-success/:orderId" element={<OrderSuccess />} />
           <Route path="order/:orderId" element={<OrderTracking />} />
+          <Route path="track" element={<OrderTracking />} />
         </Route>
 
         {/* Admin Routes */}

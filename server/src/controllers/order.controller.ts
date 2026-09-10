@@ -107,6 +107,29 @@ export const getOrder = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const getOrdersByPhone = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { phone } = req.params;
+    if (!phone) {
+      res.status(400).json({ success: false, message: 'Phone number is required' });
+      return;
+    }
+
+    const phoneParam = req.params.phone;
+    const cleanPhone = (typeof phoneParam === 'string' ? phoneParam : String(phoneParam)).trim();
+    const orders = await Order.find({ 'customer.phone': cleanPhone }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: 'Orders retrieved successfully',
+      data: orders
+    });
+  } catch (error: any) {
+    console.error('Get Orders By Phone Error:', error);
+    res.status(500).json({ success: false, message: 'Something went wrong retrieving orders by phone' });
+  }
+};
+
 export const uploadPaymentScreenshot = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderId } = req.params;
