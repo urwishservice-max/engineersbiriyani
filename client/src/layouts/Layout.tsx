@@ -41,8 +41,6 @@ const Layout = () => {
           {[
             { name: 'HOME', path: '/' },
             { name: 'ABOUT', path: '/about' },
-            { name: 'MENU', path: '/menu' },
-            { name: 'CONTACT', path: '/contact' },
             { name: 'TRACK ORDER', path: '/track' },
           ].map((link) => (
             <Link 
@@ -64,9 +62,6 @@ const Layout = () => {
           <a href="https://www.instagram.com/engineersbiriyani/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#FFB800] transition-colors hidden sm:block">
             <Instagram className="w-5 h-5 stroke-[1.5]" />
           </a>
-          <Link to="/menu" className="text-white hover:text-[#FFB800] transition-colors hidden sm:block">
-            <Search className="w-5 h-5 stroke-[1.5]" />
-          </Link>
           <Link to="/checkout" className="text-white hover:text-[#FFB800] transition-colors relative mr-2">
             <ShoppingCart className="w-5 h-5 stroke-[1.5]" />
             <span className="absolute -top-2 -right-2 bg-[#FFB800] text-black text-[10px] font-extrabold rounded-full w-4 h-4 flex items-center justify-center">1</span>
@@ -84,8 +79,6 @@ const Layout = () => {
           {[
             { name: 'HOME', path: '/' },
             { name: 'ABOUT', path: '/about' },
-            { name: 'MENU', path: '/menu' },
-            { name: 'CONTACT', path: '/contact' },
             { name: 'TRACK ORDER', path: '/track' },
           ].map((link) => (
             <Link 
@@ -149,8 +142,6 @@ const Layout = () => {
               <ul className="flex flex-col gap-3 text-white/90 text-[13px]">
                 <li><Link to="/" className="hover:text-[#FFB800] transition">Home</Link></li>
                 <li><Link to="/about" className="hover:text-[#FFB800] transition">About Us</Link></li>
-                <li><Link to="/menu" className="hover:text-[#FFB800] transition">Menu</Link></li>
-                <li><Link to="/contact" className="hover:text-[#FFB800] transition">Contact</Link></li>
                 <li><Link to="/track" className="hover:text-[#FFB800] transition text-[#FFB800] font-semibold">Track Order</Link></li>
               </ul>
             </div>

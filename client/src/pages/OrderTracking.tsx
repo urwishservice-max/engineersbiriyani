@@ -27,19 +27,32 @@ const OrderTracking = () => {
   // Fetch single order if orderId is present
   const fetchSingleOrder = async (id: string) => {
     setLoading(true);
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/orders/${id}`);
-      if (response.data.success) {
+      const response = await axios.get(`${apiBase}/api/orders/${id}`);
+      if (response.data?.success) {
         setOrder(response.data.data);
         if (response.data.data.feedback) {
           setFeedbackSubmitted(true);
         }
+        setLoading(false);
+        return;
       }
     } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+      console.warn('API fetch order failed in OrderTracking:', err);
     }
+
+    const saved = localStorage.getItem(`order_${id}`);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setOrder(parsed);
+        if (parsed.feedback) setFeedbackSubmitted(true);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setLoading(false);
   };
 
   // Fetch orders by phone
@@ -47,22 +60,45 @@ const OrderTracking = () => {
     if (!phoneNumber || phoneNumber.length < 10) return;
     setSearchingPhone(true);
     setPhoneError('');
+    const cleanPhone = phoneNumber.trim();
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/orders/phone/${phoneNumber.trim()}`);
-      if (response.data.success) {
+      const response = await axios.get(`${apiBase}/api/orders/phone/${cleanPhone}`);
+      if (response.data?.success && response.data.data?.length > 0) {
         setUserOrders(response.data.data);
-        localStorage.setItem('customerPhone', phoneNumber.trim());
-        setPhone(phoneNumber.trim());
-        if (response.data.data.length === 0) {
-          setPhoneError('No orders found for this mobile number.');
-        }
+        localStorage.setItem('customerPhone', cleanPhone);
+        setPhone(cleanPhone);
+        setSearchingPhone(false);
+        return;
       }
     } catch (err) {
-      console.error(err);
-      setPhoneError('Failed to fetch orders for this phone number.');
-    } finally {
-      setSearchingPhone(false);
+      console.warn('API fetch orders by phone failed, fallback to local_orders:', err);
     }
+
+    // Check local storage orders
+    const localOrdersStr = localStorage.getItem('local_orders');
+    if (localOrdersStr) {
+      try {
+        const allLocalOrders = JSON.parse(localOrdersStr);
+        const filtered = allLocalOrders.filter((o: any) => o.customer?.phone === cleanPhone);
+        if (filtered.length > 0) {
+          setUserOrders(filtered);
+          localStorage.setItem('customerPhone', cleanPhone);
+          setPhone(cleanPhone);
+          setSearchingPhone(false);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    localStorage.setItem('customerPhone', cleanPhone);
+    setPhone(cleanPhone);
+    setUserOrders([]);
+    setPhoneError('No orders found for this mobile number.');
+    setSearchingPhone(false);
   };
 
   useEffect(() => {

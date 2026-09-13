@@ -16,17 +16,17 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 text-gray-900">
       {/* Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200 text-center">
-          <h2 className="font-serif font-bold text-xl">Admin Panel</h2>
+          <h2 className="font-serif font-bold text-xl text-gray-900">Admin Panel</h2>
         </div>
         <nav className="flex-1 p-4 space-y-2">
-          <Link to="/admin/orders" className="flex items-center gap-3 px-4 py-3 bg-gray-100 text-black rounded-md font-medium text-sm">
+          <Link to="/admin/orders" className="flex items-center gap-3 px-4 py-3 bg-gray-100 text-black rounded-md font-bold text-sm">
             <LayoutDashboard size={18} /> Orders
           </Link>
-          <Link to="/admin/feedbacks" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 text-gray-700 hover:text-black rounded-md font-medium text-sm transition">
+          <Link to="/admin/feedbacks" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 text-gray-800 hover:text-black rounded-md font-medium text-sm transition">
             <LayoutDashboard size={18} /> Feedbacks
           </Link>
         </nav>
@@ -41,8 +41,8 @@ const AdminLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+      <div className="flex-1 flex flex-col overflow-hidden text-gray-900">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 text-gray-900">
           <Outlet />
         </main>
       </div>

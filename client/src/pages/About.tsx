@@ -1,101 +1,167 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Instagram } from 'lucide-react';
 
-const About = () => {
+const About: React.FC = () => {
+  const teamMembers = [
+    {
+      name: "Mr. Pranav",
+      role: "FOUNDER",
+      image: "/Pi7_Tool_IMG-20231102-WA0023%20(1).jpg",
+      insta: "#"
+    },
+    {
+      name: "Mr. Abrar Shariff",
+      role: "CO-FOUNDER",
+      image: "/IMG20240626124102.jpg",
+      insta: "#"
+    },
+    {
+      name: "Mr. Dinesh Kumar",
+      role: "CEO",
+      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.23_23657aee.jpg",
+      insta: "#"
+    },
+    {
+      name: "Mr. Amjath Ali Khan",
+      role: "CFO",
+      image: "/IMG_20251207_102134.jpg",
+      insta: "#"
+    },
+    {
+      name: "Jaidev Ramakrishna",
+      role: "WEB DESIGNER & DEVELOPER",
+      image: "/jai.jpg",
+      insta: "https://www.instagram.com/urwish.service"
+    }
+  ];
+
+  const specialThanks = [
+    {
+      name: "Mr. Yugesh Balaji",
+      role: "Logo Designer",
+      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.22_01797664.jpg"
+    },
+    {
+      name: "Mr. Mohamed Aflal",
+      role: "Creative NameLord",
+      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.24_a1c8d328.jpg"
+    }
+  ];
+
   return (
-    <div className="w-full bg-black text-white min-h-screen font-sans pt-[80px]">
-      
-      {/* INTRO HERO */}
-      <section className="min-h-[35vh] flex flex-col justify-center relative overflow-hidden text-center px-6 bg-gradient-to-b from-black to-[#0A0A0A] border-b border-[#27272A]">
-        <div className="relative z-10 max-w-3xl mx-auto py-16">
-          <span className="eyebrow mx-auto justify-center flex mb-4">ABOUT US</span>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[#FFB800] mb-4">
-            Our Story & Passion
-          </h1>
-          <p className="text-white text-lg font-normal tracking-wide">
-            Crafted with Passion. Engineered for Taste. Delivered with Purpose.
+    <div className="w-full bg-black text-white font-sans min-h-screen pt-28 pb-20 px-4 sm:px-8">
+      {/* ABOUT US CARD SECTION (Screenshots 1 & 2) */}
+      <section className="max-w-[900px] mx-auto mb-20">
+        <h1 className="font-serif text-4xl sm:text-5xl font-bold text-[#f5a623] text-center mb-10">
+          About Us
+        </h1>
+
+        <div className="bg-[#111315] border border-white/10 rounded-[24px] p-8 sm:p-12 space-y-6 text-gray-300 text-left shadow-2xl">
+          <h2 className="text-[#f5a623] font-bold text-lg sm:text-xl">
+            Crafted with Passion. Delivered with Purpose.
+          </h2>
+
+          <p className="leading-relaxed text-sm sm:text-base">
+            At Engineer Biryani, we believe that a hearty meal shouldn't come at the cost of your wallet—or the planet. Born out of a simple idea to deliver authentic, flavorful biryani with zero waste and full satisfaction, we serve one goal: to make your Sunday lunch unforgettable.
+          </p>
+
+          <p className="leading-relaxed text-sm sm:text-base">
+            We operate on a <strong className="text-[#f5a623] font-bold">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday. This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
+          </p>
+
+          <p className="leading-relaxed text-sm sm:text-base">
+            Every biryani packet is designed to serve two people, with:
+          </p>
+
+          <ul className="space-y-3 pl-2 text-sm sm:text-base text-white">
+            <li className="flex items-center gap-3">
+              <span className="text-[#f5a623] font-bold text-base">✓</span>
+              <span>Aromatic rice cooked with rich spices</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="text-[#f5a623] font-bold text-base">✓</span>
+              <span>Two juicy pieces of chicken</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="text-[#f5a623] font-bold text-base">✓</span>
+              <span>Accompanied by onion raita and pachadi</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="text-[#f5a623] font-bold text-base">✓</span>
+              <span>Free doorstep delivery</span>
+            </li>
+          </ul>
+
+          <p className="leading-relaxed text-sm sm:text-base">
+            We're not just serving food—we're building a community of biryani lovers who appreciate taste, quantity, and value. Whether you're a student, a working professional, or a family craving a special Sunday meal, Engineer Biryani has something special for you.
+          </p>
+
+          <p className="leading-relaxed text-sm sm:text-base">
+            Why <strong className="text-[#f5a623] font-bold">"Engineer Biryani"</strong>? Because like every great engineering solution, our model is smart, efficient, and built to serve.
+          </p>
+
+          <p className="font-bold text-white text-base sm:text-lg pt-2">
+            Pre-order once, enjoy twice the flavor. That's our promise.
           </p>
         </div>
       </section>
 
-      {/* OUR STORY SECTION */}
-      <section className="bg-[#0A0A0A] py-24 px-6 md:px-12">
-        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-16 mb-24">
-          <div className="w-full md:w-1/2">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-[#27272A] shadow-xl">
-              <img 
-                src="/0faac298-d842-43ca-9176-497a2435f707.jpg" 
-                alt="Our Kitchen" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=800&auto=format&fit=crop';
-                }}
-              />
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 space-y-6">
-            <span className="eyebrow">OUR JOURNEY</span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#FFB800]">A Simple Idea, Perfected</h2>
-            <div className="space-y-4 text-white font-normal leading-relaxed">
-              <p>
-                At Engineer's Biriyani, we believe that a hearty, delicious meal shouldn't come at the cost of your wallet—or quality.
-                Born out of a vision to deliver authentic, mouth-watering biryani with zero waste and maximum satisfaction, we serve one goal: to make every meal unforgettable.
-              </p>
-              <p>
-                We operate on a <strong className="font-bold text-[#FFB800]">pre-order model</strong>, ensuring every batch is prepared fresh, hot, and full of rich authentic spices.
-                This approach guarantees peak quality and delivers generous portions at unbeatable value.
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* MEET OUR TEAM SECTION (Screenshot 3) */}
+      <section className="max-w-[1250px] mx-auto mb-20">
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white text-center mb-12">
+          Meet Our Team
+        </h2>
 
-        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row-reverse items-center gap-16">
-          <div className="w-full md:w-1/2">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-[#27272A] shadow-xl">
-              <img 
-                src="/Chicken-Biryani-Recipe.jpg" 
-                alt="Signature Dish" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=800&auto=format&fit=crop';
-                }}
-              />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {teamMembers.map((member, i) => (
+            <div key={i} className="bg-[#111315] border border-white/10 rounded-[20px] p-6 text-center flex flex-col items-center justify-between shadow-xl hover:-translate-y-1 transition-transform">
+              <div>
+                <img 
+                  src={member.image} 
+                  alt={member.name} 
+                  className="w-28 h-28 rounded-full border-2 border-[#f5a623] object-cover mx-auto mb-4 shadow-md"
+                />
+                <h3 className="font-bold text-white text-base mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-[#f5a623] font-bold text-[11px] tracking-wider uppercase mb-4">
+                  {member.role}
+                </p>
+              </div>
+              <a href={member.insta} target="_blank" rel="noopener noreferrer" className="text-[#f5a623] hover:scale-110 transition-transform">
+                <Instagram className="w-5 h-5" />
+              </a>
             </div>
-          </div>
-          <div className="w-full md:w-1/2 space-y-6">
-            <span className="eyebrow">WHAT WE SERVE</span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#FFB800]">More Than Just Food</h2>
-            <ul className="space-y-4 mb-6 text-white font-normal">
-              {[
-                'Aromatic basmati rice cooked with hand-picked spices',
-                'Tender, succulent chicken pieces cooked to perfection',
-                'Accompanied by fresh onion raita & authentic brinjal pachadi',
-                'Fast and reliable doorstep delivery'
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-4">
-                  <span className="bg-[#FFB800] text-black font-bold w-6 h-6 rounded-full flex items-center justify-center text-xs">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-white font-normal leading-relaxed">
-              Why "Engineer's Biriyani"? Because like every great engineering creation, our recipe is smart, precise, and built to deliver excellence.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* CTA BAND */}
-      <section className="bg-black py-24 px-6 md:px-12 text-center flex flex-col items-center border-t border-[#27272A]">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#FFB800] mb-8">Hungry For Excellence?</h2>
-        <Link to="/checkout" className="btn-primary">
-          Order Online Now
-        </Link>
-      </section>
+      {/* SPECIAL THANKS SECTION (Screenshot 4 - Image 2 match) */}
+      <section className="max-w-[800px] mx-auto mb-16">
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white text-center mb-10">
+          Special Thanks
+        </h2>
 
+        <div className="flex flex-wrap justify-center gap-12 text-center">
+          {specialThanks.map((person, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <img 
+                src={person.image} 
+                alt={person.name} 
+                className="w-24 h-24 rounded-full border-2 border-[#f5a623] object-cover mb-3 shadow-md"
+              />
+              <h4 className="font-bold text-[#f5a623] text-sm mb-1">
+                {person.name}
+              </h4>
+              <p className="text-gray-400 text-xs">
+                {person.role}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
 
 export default About;
-
