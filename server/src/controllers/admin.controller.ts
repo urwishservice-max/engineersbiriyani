@@ -8,7 +8,7 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
   try {
     const { email, password } = req.body;
 
-    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@biriyani.com').trim().toLowerCase();
+    const adminEmail = (process.env.ADMIN_EMAIL || 'ersbiriyani@gmail.com').trim().toLowerCase();
     const adminPassword = (process.env.ADMIN_PASSWORD || 'admin123').trim();
 
     const inputEmail = (email || '').trim().toLowerCase();

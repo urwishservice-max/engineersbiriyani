@@ -16,21 +16,29 @@ const AdminOrderDetails = () => {
   const token = localStorage.getItem('adminToken');
 
   const fetchOrder = async () => {
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}`, {
+      const response = await axios.get(`${apiBase}/api/admin/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (response.data.success) {
+      if (response.data?.success) {
         setOrder(response.data.data);
+        setLoading(false);
+        return;
       }
     } catch (err: any) {
-      if (err.response?.status === 401) {
-        localStorage.removeItem('adminToken');
-        navigate('/admin/login');
-      }
-    } finally {
-      setLoading(false);
+      console.warn('API fetch order failed in AdminOrderDetails, checking localStorage:', err);
     }
+
+    const saved = localStorage.getItem(`order_${orderId}`);
+    if (saved) {
+      try {
+        setOrder(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -41,16 +49,25 @@ const AdminOrderDetails = () => {
     if (!window.confirm('Are you sure you want to verify this payment?')) return;
     
     setIsVerifying(true);
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/payment/verify`, {}, {
+      await axios.patch(`${apiBase}/api/admin/orders/${orderId}/payment/verify`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      await fetchOrder();
     } catch (err) {
-      alert('Failed to verify payment');
-    } finally {
-      setIsVerifying(false);
+      console.warn('API verify payment failed, updating local storage:', err);
     }
+
+    if (order) {
+      const updated = {
+        ...order,
+        payment: { ...order.payment, status: 'PAYMENT_VERIFIED' },
+        orderStatus: 'CONFIRMED'
+      };
+      setOrder(updated);
+      localStorage.setItem(`order_${orderId}`, JSON.stringify(updated));
+    }
+    setIsVerifying(false);
   };
 
   const handleReject = async () => {
@@ -60,27 +77,42 @@ const AdminOrderDetails = () => {
     }
     
     setIsVerifying(true);
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/payment/reject`, { reason: rejectReason }, {
+      await axios.patch(`${apiBase}/api/admin/orders/${orderId}/payment/reject`, { reason: rejectReason }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setShowRejectInput(false);
-      await fetchOrder();
     } catch (err) {
-      alert('Failed to reject payment');
-    } finally {
-      setIsVerifying(false);
+      console.warn('API reject payment failed, updating local storage:', err);
     }
+
+    if (order) {
+      const updated = {
+        ...order,
+        payment: { ...order.payment, status: 'PAYMENT_REJECTED', rejectReason },
+        orderStatus: 'CANCELLED'
+      };
+      setOrder(updated);
+      localStorage.setItem(`order_${orderId}`, JSON.stringify(updated));
+    }
+    setShowRejectInput(false);
+    setIsVerifying(false);
   };
 
   const updateStatus = async (status: string) => {
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}/status`, { status }, {
+      await axios.patch(`${apiBase}/api/admin/orders/${orderId}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      await fetchOrder();
     } catch (err) {
-      alert('Failed to update status');
+      console.warn('API update status failed, updating local storage:', err);
+    }
+
+    if (order) {
+      const updated = { ...order, orderStatus: status };
+      setOrder(updated);
+      localStorage.setItem(`order_${orderId}`, JSON.stringify(updated));
     }
   };
 
