@@ -79,11 +79,19 @@ const AdminDashboard = () => {
   }, [token, navigate]);
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const handleDelete = async (targetId: string, orderId: string) => {
-    if (!window.confirm('Are you sure you want to delete this order? This will also remove the payment screenshot to free up space.')) return;
-    
     const idToDelete = orderId || targetId;
+    
+    // Inline confirmation step to avoid browser popup blocks
+    if (confirmId !== idToDelete) {
+      setConfirmId(idToDelete);
+      setTimeout(() => setConfirmId(null), 4000);
+      return;
+    }
+
+    setConfirmId(null);
     setDeletingId(idToDelete);
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
@@ -296,11 +304,17 @@ const AdminDashboard = () => {
                         <button 
                           onClick={() => handleDelete(order._id, order.orderId)}
                           disabled={deletingId === (order.orderId || order._id)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 font-bold border border-red-200 rounded text-sm hover:bg-red-100 transition disabled:opacity-50"
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 font-bold border rounded text-sm transition disabled:opacity-50 ${
+                            confirmId === (order.orderId || order._id)
+                              ? 'bg-red-600 text-white border-red-700 hover:bg-red-700 animate-pulse'
+                              : 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100'
+                          }`}
                           title="Delete Order & Free Space"
                         >
                           {deletingId === (order.orderId || order._id) ? (
                             <span>Deleting...</span>
+                          ) : confirmId === (order.orderId || order._id) ? (
+                            <span>Confirm Delete?</span>
                           ) : (
                             <>
                               <Trash2 size={16} /> Delete

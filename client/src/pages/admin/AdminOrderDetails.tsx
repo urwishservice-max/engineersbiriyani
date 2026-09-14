@@ -46,8 +46,6 @@ const AdminOrderDetails = () => {
   }, [orderId, token, navigate]);
 
   const handleVerify = async () => {
-    if (!window.confirm('Are you sure you want to verify this payment?')) return;
-    
     setIsVerifying(true);
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
@@ -117,18 +115,30 @@ const AdminOrderDetails = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this order? This cannot be undone and will free up storage space.')) return;
-    
     setIsDeleting(true);
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com'}/api/admin/orders/${orderId}`, {
+      await axios.delete(`${apiBase}/api/admin/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      navigate('/admin/orders');
     } catch (err) {
-      alert('Failed to delete order');
-      setIsDeleting(false);
+      console.warn('API delete order failed:', err);
     }
+
+    // Always clean up local storage and navigate back
+    const localOrdersStr = localStorage.getItem('local_orders');
+    if (localOrdersStr) {
+      try {
+        const localOrders = JSON.parse(localOrdersStr);
+        const updated = localOrders.filter((o: any) => o.orderId !== orderId && o._id !== orderId);
+        localStorage.setItem('local_orders', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    localStorage.removeItem(`order_${orderId}`);
+    setIsDeleting(false);
+    navigate('/admin/orders');
   };
 
   const getWhatsAppLink = (type: 'payment' | 'delivery') => {
