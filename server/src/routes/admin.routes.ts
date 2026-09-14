@@ -124,25 +124,29 @@ router.patch('/orders/:orderId/feedback/approve', async (req, res) => {
 // Delete Order
 router.delete('/orders/:orderId', async (req, res) => {
   try {
-    const order = await Order.findOne({ orderId: req.params.orderId });
+    const id = req.params.orderId;
+    const query = id.match(/^[0-9a-fA-F]{24}$/)
+      ? { $or: [{ orderId: id }, { _id: id }] }
+      : { orderId: id };
+
+    const order = await Order.findOne(query);
     if (!order) {
        res.status(404).json({ success: false, message: 'Order not found' });
        return;
     }
     
     // Attempt to delete from cloudinary if there is a publicId
-    if (order.payment.screenshotPublicId) {
+    if (order.payment?.screenshotPublicId) {
       await deletePaymentScreenshot(order.payment.screenshotPublicId);
-    } else if (order.payment.screenshotUrl) {
+    } else if (order.payment?.screenshotUrl) {
       // Fallback: Extract publicId from URL if it exists but wasn't saved explicitly
-      // Basic extraction for standard Cloudinary URLs: /v1234567/biriyani-orders/payments/abc1234
       const matches = order.payment.screenshotUrl.match(/\/v\d+\/(.+)\.[a-z]+$/i);
       if (matches && matches[1]) {
         await deletePaymentScreenshot(matches[1]);
       }
     }
 
-    await Order.deleteOne({ orderId: req.params.orderId });
+    await Order.deleteOne({ _id: order._id });
     res.status(200).json({ success: true, message: 'Order deleted successfully' });
   } catch (error) {
     console.error('Delete Order Error:', error);

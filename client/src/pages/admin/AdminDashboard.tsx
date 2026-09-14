@@ -78,21 +78,40 @@ const AdminDashboard = () => {
     fetchStorage();
   }, [token, navigate]);
 
-  const handleDelete = async (orderId: string) => {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (targetId: string, orderId: string) => {
     if (!window.confirm('Are you sure you want to delete this order? This will also remove the payment screenshot to free up space.')) return;
+    
+    const idToDelete = orderId || targetId;
+    setDeletingId(idToDelete);
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      await axios.delete(`${apiBase}/api/admin/orders/${orderId}`, {
+      await axios.delete(`${apiBase}/api/admin/orders/${idToDelete}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
       console.warn('API delete order failed, removing from local storage:', err);
     }
     
-    const updated = orders.filter(o => o.orderId !== orderId);
+    const updated = orders.filter(o => o.orderId !== idToDelete && o._id !== idToDelete);
     setOrders(updated);
     localStorage.setItem('local_orders', JSON.stringify(updated));
-    localStorage.removeItem(`order_${orderId}`);
+    if (orderId) localStorage.removeItem(`order_${orderId}`);
+    if (targetId) localStorage.removeItem(`order_${targetId}`);
+    setDeletingId(null);
+    
+    // Refresh storage metrics after deletion
+    try {
+      const storageRes = await axios.get(`${apiBase}/api/admin/storage`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (storageRes.data?.success && storageRes.data?.data) {
+        setStorageUsage(storageRes.data.data);
+      }
+    } catch (e) {
+      console.warn(e);
+    }
   };
 
   const filteredOrders = orders.filter(order => {
@@ -275,11 +294,18 @@ const AdminDashboard = () => {
                           <Eye size={16} /> View
                         </Link>
                         <button 
-                          onClick={() => handleDelete(order.orderId)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 font-bold border border-red-200 rounded text-sm hover:bg-red-100 transition"
+                          onClick={() => handleDelete(order._id, order.orderId)}
+                          disabled={deletingId === (order.orderId || order._id)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 font-bold border border-red-200 rounded text-sm hover:bg-red-100 transition disabled:opacity-50"
                           title="Delete Order & Free Space"
                         >
-                          <Trash2 size={16} /> Delete
+                          {deletingId === (order.orderId || order._id) ? (
+                            <span>Deleting...</span>
+                          ) : (
+                            <>
+                              <Trash2 size={16} /> Delete
+                            </>
+                          )}
                         </button>
                       </div>
                     </td>
