@@ -56,6 +56,12 @@ const OrderSuccess = () => {
               <span className="text-gray-400">Customer:</span>
               <span className="font-bold text-white">{order.customer.name}</span>
             </div>
+            {order.customer?.location && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Location:</span>
+                <span className="font-bold text-[#FFB800]">{order.customer.location}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-gray-400">Product:</span>
               <span className="font-bold text-white">{order.product.name} × {order.product.quantity}</span>

@@ -200,6 +200,10 @@ const AdminOrderDetails = () => {
                 </div>
               </div>
               <div className="col-span-2">
+                <p className="text-sm text-gray-500">Location (Campus)</p>
+                <p className="font-semibold text-amber-600">{order.customer.location || 'CIT - Coimbatore Institute of Technology, Peelamedu'}</p>
+              </div>
+              <div className="col-span-2">
                 <p className="text-sm text-gray-500">Address</p>
                 <p className="font-medium">{order.customer.address}, {order.customer.landmark && `${order.customer.landmark}, `}{order.customer.city} - {order.customer.pincode}</p>
               </div>

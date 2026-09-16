@@ -48,7 +48,7 @@ const Home: React.FC = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[900px] mx-auto">
-          {/* Card 1: 600g Box @ Rs 130 */}
+          {/* Card 1: 600g Box @ Rs 129 */}
           <div className="bg-[#111315] rounded-[24px] p-6 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex flex-col items-center hover:-translate-y-1 transition-transform">
             <div className="w-full h-[220px] rounded-[16px] overflow-hidden mb-6">
               <img 
@@ -63,7 +63,7 @@ const Home: React.FC = () => {
             <p className="text-xs text-gray-400 mb-4">2 Pieces Chicken + Onion Raita & Pachadi</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 160</span>
-              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 130</span>
+              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 129</span>
             </div>
 
             <Link 
@@ -74,7 +74,7 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          {/* Card 2: 1200g Family Box @ Rs 250 */}
+          {/* Card 2: 1200g Family Box @ Rs 239 */}
           <div className="bg-[#111315] rounded-[24px] p-6 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex flex-col items-center hover:-translate-y-1 transition-transform">
             <div className="w-full h-[220px] rounded-[16px] overflow-hidden mb-6">
               <img 
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
             <p className="text-xs text-gray-400 mb-4">3 to 4 Pieces Chicken + Bread Halwa & Raita</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 300</span>
-              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 250</span>
+              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 239</span>
             </div>
 
             <Link 

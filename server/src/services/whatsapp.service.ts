@@ -21,6 +21,7 @@ Order ID: ${order.orderId}
 
 Customer: ${order.customer.name}
 Phone: ${order.customer.phone}
+Location: ${order.customer.location || 'N/A'}
 Address:
 ${order.customer.address}
 ${order.customer.city} - ${order.customer.pincode}

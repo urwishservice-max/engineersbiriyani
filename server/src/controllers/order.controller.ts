@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 dotenv.config();
 
-const BIRIYANI_PRICE = parseInt(process.env.BIRIYANI_PRICE || '250', 10);
+const BIRIYANI_PRICE = parseInt(process.env.BIRIYANI_PRICE || '239', 10);
 const DELIVERY_CHARGE = parseInt(process.env.DELIVERY_CHARGE || '0', 10);
 
 const generateOrderId = (): string => {
@@ -28,14 +28,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    let unitPrice = BIRIYANI_PRICE; // 250
+    let unitPrice = BIRIYANI_PRICE; // 239
     let weight = '1200g';
     let pieces = '3 to 4 piece';
     let breadHalwa = true;
     let productName = 'Chicken Biriyani (1200g)';
 
     if (optionType === '600g') {
-      unitPrice = 130;
+      unitPrice = 129;
       weight = '600g';
       pieces = '2 piece';
       breadHalwa = false;
@@ -51,6 +51,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       customer: {
         name: customer.name,
         phone: customer.phone,
+        location: customer.location || 'CIT - Coimbatore Institute of Technology, Peelamedu',
         address: customer.address,
         landmark: customer.landmark,
         city: customer.city,

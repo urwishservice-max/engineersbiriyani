@@ -5,6 +5,7 @@ export interface IOrder extends Document {
   customer: {
     name: string;
     phone: string;
+    location?: string;
     address: string;
     landmark?: string;
     city: string;
@@ -46,6 +47,7 @@ const OrderSchema: Schema = new Schema({
   customer: {
     name: { type: String, required: true },
     phone: { type: String, required: true, index: true },
+    location: { type: String, default: 'CIT - Coimbatore Institute of Technology, Peelamedu' },
     address: { type: String, required: true },
     landmark: { type: String },
     city: { type: String, required: true },

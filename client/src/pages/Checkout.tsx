@@ -6,9 +6,16 @@ import * as z from 'zod';
 import axios from 'axios';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
+const LOCATIONS = [
+  'CIT - Coimbatore Institute of Technology, Peelamedu',
+  'PSG - PSG Institute of Technology, Peelamedu',
+  'Krishnamaal clg of Arts and Science, Peelamedu',
+];
+
 const checkoutSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number'),
+  location: z.string().min(1, 'Delivery location is required'),
   address: z.string().min(5, 'Delivery address is required'),
   landmark: z.string().optional(),
   city: z.string().min(2, 'City is required'),
@@ -18,8 +25,8 @@ const checkoutSchema = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 const OPTIONS = {
-  '600g': { name: 'Chicken Biriyani (600g)', price: 130, desc: '2 pieces' },
-  '1200g': { name: 'Chicken Biriyani (1200g)', price: 250, desc: '3 to 4 pieces + Bread Halwa' }
+  '600g': { name: 'Chicken Biriyani (600g)', price: 129, desc: '2 pieces' },
+  '1200g': { name: 'Chicken Biriyani (1200g)', price: 239, desc: '3 to 4 pieces + Bread Halwa' }
 };
 
 const Checkout = () => {
@@ -36,6 +43,11 @@ const Checkout = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      location: 'CIT - Coimbatore Institute of Technology, Peelamedu',
+      city: 'Coimbatore',
+      pincode: '641014'
+    }
   });
 
   const onSubmit = async (data: CheckoutFormValues) => {
@@ -147,7 +159,7 @@ const Checkout = () => {
                     {optionType === '600g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">600g Box</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹130</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹129</span>
                     </div>
                     <p className="text-xs text-gray-300">2 pieces chicken</p>
                   </div>
@@ -159,7 +171,7 @@ const Checkout = () => {
                     {optionType === '1200g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">1200g Bucket</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹250</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹239</span>
                     </div>
                     <p className="text-xs text-gray-300">3-4 pieces + Bread Halwa</p>
                   </div>
@@ -192,11 +204,26 @@ const Checkout = () => {
                 </div>
 
                 <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">Select Delivery Location</label>
+                  <select
+                    {...register('location')}
+                    className="w-full p-3.5 rounded-lg border border-[#27272A] bg-[#18181B] text-white focus:outline-none focus:border-[#FFB800] transition-colors text-sm"
+                  >
+                    {LOCATIONS.map((loc) => (
+                      <option key={loc} value={loc} className="bg-[#18181B] text-white">
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.location && <p className="text-red-400 text-xs mt-1 font-medium">{errors.location.message}</p>}
+                </div>
+
+                <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">Delivery Address</label>
                   <textarea 
                     {...register('address')}
                     className="w-full p-3.5 rounded-lg border border-[#27272A] bg-[#18181B] text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FFB800] transition-colors text-sm min-h-[90px] resize-y"
-                    placeholder="Flat No, Building, Street"
+                    placeholder="Flat No, Building, Street, Hostel / Room No"
                   ></textarea>
                   {errors.address && <p className="text-red-400 text-xs mt-1 font-medium">{errors.address.message}</p>}
                 </div>
