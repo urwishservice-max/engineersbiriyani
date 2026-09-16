@@ -18,7 +18,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
   try {
     const { customer, quantity, optionType = '1200g' } = req.body;
 
-    if (!customer || !customer.name || !customer.phone || !customer.address || !customer.city || !customer.pincode) {
+    if (!customer || !customer.name || !customer.phone || !customer.city || !customer.pincode) {
       res.status(400).json({ success: false, message: 'Missing required customer details' });
       return;
     }
@@ -52,8 +52,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         name: customer.name,
         phone: customer.phone,
         location: customer.location || 'CIT - Coimbatore Institute of Technology, Peelamedu',
-        address: customer.address,
-        landmark: customer.landmark,
+        address: customer.address || customer.location || 'CIT - Coimbatore Institute of Technology, Peelamedu',
+        landmark: customer.landmark || '',
         city: customer.city,
         pincode: customer.pincode,
       },

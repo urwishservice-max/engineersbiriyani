@@ -16,8 +16,6 @@ const checkoutSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number'),
   location: z.string().min(1, 'Delivery location is required'),
-  address: z.string().min(5, 'Delivery address is required'),
-  landmark: z.string().optional(),
   city: z.string().min(2, 'City is required'),
   pincode: z.string().regex(/^\d{6}$/, 'Please enter a valid 6-digit pincode'),
 });
@@ -57,10 +55,15 @@ const Checkout = () => {
       localStorage.setItem('customerPhone', data.phone);
       const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       
+      const customerPayload = {
+        ...data,
+        address: data.location,
+      };
+
       let createdOrderId = '';
       try {
         const response = await axios.post(`${apiBase}/api/orders`, {
-          customer: data,
+          customer: customerPayload,
           quantity,
           optionType,
         });
@@ -80,7 +83,7 @@ const Checkout = () => {
 
         const fallbackOrder = {
           orderId: createdOrderId,
-          customer: data,
+          customer: customerPayload,
           product: {
             name: currentOption.name,
             quantity,
@@ -216,26 +219,6 @@ const Checkout = () => {
                     ))}
                   </select>
                   {errors.location && <p className="text-red-400 text-xs mt-1 font-medium">{errors.location.message}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">Delivery Address</label>
-                  <textarea 
-                    {...register('address')}
-                    className="w-full p-3.5 rounded-lg border border-[#27272A] bg-[#18181B] text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FFB800] transition-colors text-sm min-h-[90px] resize-y"
-                    placeholder="Flat No, Building, Street, Hostel / Room No"
-                  ></textarea>
-                  {errors.address && <p className="text-red-400 text-xs mt-1 font-medium">{errors.address.message}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">Landmark <span className="text-gray-400 font-normal">(Optional)</span></label>
-                  <input 
-                    {...register('landmark')}
-                    type="text" 
-                    className="w-full p-3.5 rounded-lg border border-[#27272A] bg-[#18181B] text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FFB800] transition-colors text-sm"
-                    placeholder="Near Apollo Hospital"
-                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
