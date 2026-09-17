@@ -24,7 +24,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 const OPTIONS = {
   '600g': { name: 'Chicken Biriyani (600g)', price: 129, desc: '2 pieces' },
-  '1200g': { name: 'Chicken Biriyani (1200g)', price: 239, desc: '3 to 4 pieces + Bread Halwa' }
+  '1200g': { name: 'Chicken Biriyani (1200g)', price: 239, desc: '3 to 4 pieces' }
 };
 
 const Checkout = () => {
@@ -91,7 +91,7 @@ const Checkout = () => {
             totalAmount,
             weight: optionType,
             pieces: optionType === '600g' ? '2 pieces' : '3 to 4 pieces',
-            breadHalwa: optionType === '1200g',
+            breadHalwa: false,
           },
           payment: {
             method: 'UPI',
@@ -176,7 +176,7 @@ const Checkout = () => {
                       <span className="font-bold text-white">1200g Bucket</span>
                       <span className="font-bold text-xl text-[#FFB800]">₹239</span>
                     </div>
-                    <p className="text-xs text-gray-300">3-4 pieces + Bread Halwa</p>
+                    <p className="text-xs text-gray-300">3-4 pieces</p>
                   </div>
                 </div>
               </div>

@@ -218,7 +218,6 @@ const AdminOrderDetails = () => {
                   <span className="font-medium text-lg">{order.product.name} ({order.product.weight || '1200g'})</span>
                   <div className="text-sm text-gray-500 mt-1">
                     <p>• {order.product.pieces || '3 to 4 pieces'} of Chicken</p>
-                    <p>• {order.product.breadHalwa !== false ? 'Includes Bread Halwa' : 'No Bread Halwa'}</p>
                   </div>
                 </div>
                 <span className="font-medium">{order.product.quantity} × ₹{order.product.unitPrice}</span>

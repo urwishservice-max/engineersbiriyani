@@ -31,7 +31,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     let unitPrice = BIRIYANI_PRICE; // 239
     let weight = '1200g';
     let pieces = '3 to 4 piece';
-    let breadHalwa = true;
+    let breadHalwa = false;
     let productName = 'Chicken Biriyani (1200g)';
 
     if (optionType === '600g') {
