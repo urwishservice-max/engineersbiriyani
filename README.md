@@ -73,7 +73,7 @@ ADMIN_EMAIL=admin@biriyani.com
 ADMIN_PASSWORD=admin123
 
 # Business Info
-UPI_ID=business@upi
+UPI_ID=amjathali003-1@okicici
 BUSINESS_NAME="Engineer's Biriyani"
 BIRIYANI_PRICE=250
 DELIVERY_CHARGE=0

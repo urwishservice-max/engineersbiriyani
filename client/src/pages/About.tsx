@@ -84,7 +84,7 @@ const About: React.FC = () => {
             </li>
             <li className="flex items-center gap-3">
               <span className="text-[#f5a623] font-bold text-base">✓</span>
-              <span>Accompanied by onion raita and pachadi</span>
+              <span>Accompanied by Onion Raita and Kathrika</span>
             </li>
             <li className="flex items-center gap-3">
               <span className="text-[#f5a623] font-bold text-base">✓</span>

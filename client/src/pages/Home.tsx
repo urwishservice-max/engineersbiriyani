@@ -60,7 +60,7 @@ const Home: React.FC = () => {
             <h3 className="text-lg font-extrabold text-white tracking-wide uppercase mb-1">
               CHICKEN BIRIYANI (600g)
             </h3>
-            <p className="text-xs text-gray-400 mb-4">2 Pieces Chicken + Onion Raita & Pachadi</p>
+            <p className="text-xs text-gray-400 mb-4">2 Pieces Chicken + Onion Raita & Kathrika</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 160</span>
               <span className="text-[#f5a623] text-3xl font-extrabold">Rs 129</span>
@@ -86,7 +86,7 @@ const Home: React.FC = () => {
             <h3 className="text-lg font-extrabold text-white tracking-wide uppercase mb-1">
               CHICKEN BIRIYANI (1200g)
             </h3>
-            <p className="text-xs text-gray-400 mb-4">3 to 4 Pieces Chicken + Bread Halwa & Raita</p>
+            <p className="text-xs text-gray-400 mb-4">3 to 4 Pieces Chicken + Bread Halwa, Onion Raita & Kathrika</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 300</span>
               <span className="text-[#f5a623] text-3xl font-extrabold">Rs 239</span>

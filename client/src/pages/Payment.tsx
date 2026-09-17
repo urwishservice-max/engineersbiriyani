@@ -24,7 +24,7 @@ const Payment = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   
-  const upiId = 'business@upi';
+  const upiId = import.meta.env.VITE_UPI_ID || 'amjathali003-1@okicici';
 
   useEffect(() => {
     const fetchOrder = async () => {
