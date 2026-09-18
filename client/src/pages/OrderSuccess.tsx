@@ -87,7 +87,7 @@ const OrderSuccess = () => {
           
           {order && (
             <a
-              href={`https://wa.me/918870877407?text=${encodeURIComponent(`Hello Engineer's Biriyani, I have placed an order (ID: ${order.orderId}) for ${order.product.name} (Qty: ${order.product.quantity}). Total: ₹${order.payment.amount}. I have uploaded my payment screenshot on the website. Please verify my payment.`)}`}
+              href={`https://wa.me/919360867908?text=${encodeURIComponent(`Hello Engineer's Biriyani, I have placed an order (ID: ${order.orderId}) for ${order.product.name} (Qty: ${order.product.quantity}). Total: ₹${order.payment.amount}. I have uploaded my payment screenshot on the website. Please verify my payment.`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary w-full py-4 text-center block text-sm border-green-500 text-green-400 hover:bg-green-500 hover:text-black"

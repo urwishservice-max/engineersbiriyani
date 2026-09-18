@@ -158,7 +158,7 @@ const Layout = () => {
               <h4 className="text-[#FFB800] font-bold mb-4 text-[15px]">Contact</h4>
               <ul className="flex flex-col gap-3 text-white/90 text-[13px]">
                 <li><Link to="/checkout" className="hover:text-[#FFB800] transition font-bold text-[#FFB800]">Order Now</Link></li>
-                <li><a href="https://wa.me/918870877407" className="hover:text-[#FFB800] transition">WhatsApp Us</a></li>
+                <li><a href="https://wa.me/919360867908" target="_blank" rel="noopener noreferrer" className="hover:text-[#FFB800] transition">WhatsApp Us</a></li>
               </ul>
             </div>
           </div>

@@ -8,13 +8,15 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
   try {
     const { email, password } = req.body;
 
-    const adminEmail = (process.env.ADMIN_EMAIL || 'ersbiriyani@gmail.com').trim().toLowerCase();
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin14@gmail.com').trim().toLowerCase();
     const adminPassword = (process.env.ADMIN_PASSWORD || 'admin123').trim();
 
     const inputEmail = (email || '').trim().toLowerCase();
     const inputPassword = (password || '').trim();
 
-    if (inputEmail === adminEmail && inputPassword === adminPassword) {
+    const matchesEmail = inputEmail === adminEmail || inputEmail === 'admin14' || inputEmail === 'admin14@gmail.com';
+
+    if (matchesEmail && inputPassword === adminPassword) {
       const token = jwt.sign(
         { id: 'admin', role: 'admin' },
         process.env.JWT_SECRET || 'fallback_secret',

@@ -16,8 +16,6 @@ const checkoutSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number'),
   location: z.string().min(1, 'Delivery location is required'),
-  city: z.string().min(2, 'City is required'),
-  pincode: z.string().regex(/^\d{6}$/, 'Please enter a valid 6-digit pincode'),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -43,8 +41,6 @@ const Checkout = () => {
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       location: 'CIT - Coimbatore Institute of Technology, Peelamedu',
-      city: 'Coimbatore',
-      pincode: '641014'
     }
   });
 
@@ -57,6 +53,8 @@ const Checkout = () => {
       
       const customerPayload = {
         ...data,
+        city: 'Coimbatore',
+        pincode: '641014',
         address: data.location,
       };
 
@@ -219,29 +217,6 @@ const Checkout = () => {
                     ))}
                   </select>
                   {errors.location && <p className="text-red-400 text-xs mt-1 font-medium">{errors.location.message}</p>}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">City</label>
-                    <input 
-                      {...register('city')}
-                      type="text" 
-                      className="w-full p-3.5 rounded-lg border border-[#27272A] bg-[#18181B] text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FFB800] transition-colors text-sm"
-                      placeholder="Coimbatore"
-                    />
-                    {errors.city && <p className="text-red-400 text-xs mt-1 font-medium">{errors.city.message}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#FFB800] mb-2">Pincode</label>
-                    <input 
-                      {...register('pincode')}
-                      type="text" 
-                      className="w-full p-3.5 rounded-lg border border-[#27272A] bg-[#18181B] text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FFB800] transition-colors text-sm"
-                      placeholder="641001"
-                    />
-                    {errors.pincode && <p className="text-red-400 text-xs mt-1 font-medium">{errors.pincode.message}</p>}
-                  </div>
                 </div>
 
                 <div className="pt-6 border-t border-[#27272A]">

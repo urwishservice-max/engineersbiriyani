@@ -35,7 +35,7 @@ const AdminLogin = () => {
     }
 
     // Fallback: check standard admin credentials offline
-    if (cleanEmail === 'admin@biriyani.com' && cleanPassword === 'admin123') {
+    if ((cleanEmail === 'admin14@gmail.com' || cleanEmail === 'admin14' || cleanEmail === 'admin@biriyani.com') && cleanPassword === 'admin123') {
       localStorage.setItem('adminToken', 'local_admin_token');
       navigate('/admin/orders');
     } else {
@@ -56,13 +56,13 @@ const AdminLogin = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">Email</label>
+            <label className="block text-sm font-bold text-gray-900 mb-1">Email / Username</label>
             <input 
-              type="email" 
+              type="text" 
               value={email}
               onChange={e => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded-md p-2.5 text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:border-black font-medium"
-              placeholder="admin@biriyani.com"
+              placeholder="admin14@gmail.com or admin14"
               required
             />
           </div>
