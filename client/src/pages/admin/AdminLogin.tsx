@@ -17,7 +17,7 @@ const AdminLogin = () => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
 
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
 
     try {
       const response = await axios.post(`${apiBase}/api/admin/login`, {
@@ -62,7 +62,7 @@ const AdminLogin = () => {
               value={email}
               onChange={e => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded-md p-2.5 text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:border-black font-medium"
-              placeholder="admin14@gmail.com or admin14"
+              placeholder="Enter your email or username"
               required
             />
           </div>

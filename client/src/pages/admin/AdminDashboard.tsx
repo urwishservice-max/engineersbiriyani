@@ -16,7 +16,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       let fetchedOrders: any[] = [];
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
       try {
         const response = await axios.get(`${apiBase}/api/admin/orders`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -51,7 +51,7 @@ const AdminDashboard = () => {
     };
 
     const fetchStorage = async () => {
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
       try {
         const response = await axios.get(`${apiBase}/api/admin/storage`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
 
     setConfirmId(null);
     setDeletingId(idToDelete);
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       await axios.delete(`${apiBase}/api/admin/orders/${idToDelete}`, {
         headers: { Authorization: `Bearer ${token}` }

@@ -9,7 +9,7 @@ const OrderSuccess = () => {
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
       try {
         const response = await axios.get(`${apiBase}/api/orders/${orderId}`);
         if (response.data?.success) {

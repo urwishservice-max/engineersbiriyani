@@ -16,7 +16,7 @@ const AdminOrderDetails = () => {
   const token = localStorage.getItem('adminToken');
 
   const fetchOrder = async () => {
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       const response = await axios.get(`${apiBase}/api/admin/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -47,7 +47,7 @@ const AdminOrderDetails = () => {
 
   const handleVerify = async () => {
     setIsVerifying(true);
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       await axios.patch(`${apiBase}/api/admin/orders/${orderId}/payment/verify`, {}, {
         headers: { Authorization: `Bearer ${token}` }
@@ -75,7 +75,7 @@ const AdminOrderDetails = () => {
     }
     
     setIsVerifying(true);
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       await axios.patch(`${apiBase}/api/admin/orders/${orderId}/payment/reject`, { reason: rejectReason }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -98,7 +98,7 @@ const AdminOrderDetails = () => {
   };
 
   const updateStatus = async (status: string) => {
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       await axios.patch(`${apiBase}/api/admin/orders/${orderId}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -116,7 +116,7 @@ const AdminOrderDetails = () => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       await axios.delete(`${apiBase}/api/admin/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }

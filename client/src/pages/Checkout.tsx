@@ -49,7 +49,7 @@ const Checkout = () => {
     setApiError('');
     try {
       localStorage.setItem('customerPhone', data.phone);
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
       
       const customerPayload = {
         ...data,

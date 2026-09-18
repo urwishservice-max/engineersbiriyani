@@ -27,7 +27,7 @@ const OrderTracking = () => {
   // Fetch single order if orderId is present
   const fetchSingleOrder = async (id: string) => {
     setLoading(true);
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
     try {
       const response = await axios.get(`${apiBase}/api/orders/${id}`);
       if (response.data?.success) {
@@ -61,7 +61,7 @@ const OrderTracking = () => {
     setSearchingPhone(true);
     setPhoneError('');
     const cleanPhone = phoneNumber.trim();
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
 
     try {
       const response = await axios.get(`${apiBase}/api/orders/phone/${cleanPhone}`);
