@@ -5,12 +5,20 @@ import { UploadCloud, CheckCircle, XCircle } from 'lucide-react';
 
 interface OrderDetails {
   orderId: string;
+  customer?: {
+    name?: string;
+    phone?: string;
+    location?: string;
+  };
+  product?: {
+    name?: string;
+    quantity?: number;
+    weight?: string;
+  };
   payment: {
     amount: number;
     status: string;
-  };
-  product: {
-    quantity: number;
+    screenshotUrl?: string;
   };
 }
 
@@ -153,13 +161,33 @@ const Payment = () => {
       }
     };
 
+    const triggerWhatsAppRedirect = (targetOrder: any) => {
+      const ownerPhone = '919360867908';
+      const cName = targetOrder?.customer?.name || order?.customer?.name || 'Customer';
+      const cPhone = targetOrder?.customer?.phone || order?.customer?.phone || '';
+      const pName = targetOrder?.product?.name || order?.product?.name || 'Biriyani';
+      const qty = targetOrder?.product?.quantity || order?.product?.quantity || 1;
+      const amount = targetOrder?.payment?.amount || order?.payment?.amount || 0;
+      const oId = targetOrder?.orderId || orderId;
+
+      const message = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${oId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\n\nPlease verify my payment!`;
+      const waUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`;
+
+      try {
+        window.open(waUrl, '_blank');
+      } catch (e) {
+        console.warn('Pop-up blocked or unable to auto-open WhatsApp:', e);
+      }
+    };
+
     if (uploadedSuccessfully && serverUpdatedOrder) {
       updateLocalStorageOrder({
         payment: serverUpdatedOrder.payment,
         orderStatus: serverUpdatedOrder.orderStatus
       });
+      triggerWhatsAppRedirect(serverUpdatedOrder);
       setIsUploading(false);
-      navigate(`/order-success/${orderId}`);
+      navigate(`/order-success/${orderId}?wa=1`);
       return;
     }
 
@@ -167,7 +195,9 @@ const Payment = () => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64Url = reader.result as string;
-      updateLocalStorageOrder({
+      const fallbackPayload = {
+        ...order,
+        orderId,
         payment: {
           method: 'UPI',
           amount: order?.payment?.amount || 0,
@@ -176,9 +206,11 @@ const Payment = () => {
           uploadedAt: new Date().toISOString()
         },
         orderStatus: 'PAYMENT_VERIFICATION'
-      });
+      };
+      updateLocalStorageOrder(fallbackPayload);
+      triggerWhatsAppRedirect(fallbackPayload);
       setIsUploading(false);
-      navigate(`/order-success/${orderId}`);
+      navigate(`/order-success/${orderId}?wa=1`);
     };
     reader.readAsDataURL(file);
   };
