@@ -98,36 +98,89 @@ const Payment = () => {
     formData.append('screenshot', file);
     
     const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+    let uploadedSuccessfully = false;
+    let serverUpdatedOrder: any = null;
 
-    try {
-      const response = await axios.post(`${apiBase}/api/orders/${orderId}/payment-screenshot`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      if (response.data?.success) {
-        navigate(`/order-success/${orderId}`);
-        return;
-      }
-    } catch (err: any) {
-      console.warn('Backend upload screenshot error, fallback to local save:', err);
-    }
-
-    // Fallback: update local storage order status
-    const saved = localStorage.getItem(`order_${orderId}`);
-    if (saved) {
+    // Retry up to 3 times to ensure upload to backend MongoDB
+    let attempts = 3;
+    while (attempts > 0 && !uploadedSuccessfully) {
       try {
-        const parsed = JSON.parse(saved);
-        parsed.payment.status = 'SCREENSHOT_UPLOADED';
-        parsed.orderStatus = 'PAYMENT_VERIFICATION';
-        localStorage.setItem(`order_${orderId}`, JSON.stringify(parsed));
-      } catch (e) {
-        console.error(e);
+        const response = await axios.post(`${apiBase}/api/orders/${orderId}/payment-screenshot`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          timeout: 20000
+        });
+        
+        if (response.data?.success) {
+          uploadedSuccessfully = true;
+          serverUpdatedOrder = response.data.data;
+          break;
+        }
+      } catch (err: any) {
+        console.warn(`Backend upload screenshot attempt ${4 - attempts} failed:`, err);
+        attempts--;
+        if (attempts > 0) {
+          await new Promise(res => setTimeout(res, 1500));
+        }
       }
     }
-    setIsUploading(false);
-    navigate(`/order-success/${orderId}`);
+
+    const updateLocalStorageOrder = (updatedFields: any) => {
+      const saved = localStorage.getItem(`order_${orderId}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          const merged = { ...parsed, ...updatedFields };
+          localStorage.setItem(`order_${orderId}`, JSON.stringify(merged));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      const localOrdersStr = localStorage.getItem('local_orders');
+      if (localOrdersStr) {
+        try {
+          const localOrders = JSON.parse(localOrdersStr);
+          const idx = localOrders.findIndex((o: any) => o.orderId === orderId);
+          if (idx !== -1) {
+            localOrders[idx] = { ...localOrders[idx], ...updatedFields };
+            localStorage.setItem('local_orders', JSON.stringify(localOrders));
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    };
+
+    if (uploadedSuccessfully && serverUpdatedOrder) {
+      updateLocalStorageOrder({
+        payment: serverUpdatedOrder.payment,
+        orderStatus: serverUpdatedOrder.orderStatus
+      });
+      setIsUploading(false);
+      navigate(`/order-success/${orderId}`);
+      return;
+    }
+
+    // Failsafe Fallback: Convert screenshot image file to Base64 Data URL for local persistence
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Url = reader.result as string;
+      updateLocalStorageOrder({
+        payment: {
+          method: 'UPI',
+          amount: order?.payment?.amount || 0,
+          status: 'SCREENSHOT_UPLOADED',
+          screenshotUrl: base64Url,
+          uploadedAt: new Date().toISOString()
+        },
+        orderStatus: 'PAYMENT_VERIFICATION'
+      });
+      setIsUploading(false);
+      navigate(`/order-success/${orderId}`);
+    };
+    reader.readAsDataURL(file);
   };
 
   if (loading) {

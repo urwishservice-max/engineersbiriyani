@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Eye, Filter, Trash2, HardDrive } from 'lucide-react';
+import { Search, Eye, Filter, Trash2, HardDrive, Camera, CheckCircle2, Clock } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -128,19 +128,36 @@ const AdminDashboard = () => {
       order.customer.phone.includes(search);
       
     const matchesFilter = filterStatus === 'ALL' || 
-      (filterStatus === 'SCREENSHOT_UPLOADED' && order.payment.status === 'SCREENSHOT_UPLOADED') ||
+      (filterStatus === 'SCREENSHOT_UPLOADED' && order.payment?.status === 'SCREENSHOT_UPLOADED') ||
       (filterStatus !== 'SCREENSHOT_UPLOADED' && order.orderStatus === filterStatus);
       
     return matchesSearch && matchesFilter;
   });
 
   const getStatusBadge = (status: string, paymentStatus: string) => {
-    if (paymentStatus === 'SCREENSHOT_UPLOADED') return <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">Verify Payment</span>;
-    if (status === 'CONFIRMED') return <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Confirmed</span>;
-    if (status === 'DELIVERED') return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Delivered</span>;
-    if (status === 'CANCELLED') return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Cancelled</span>;
-    if (status === 'PAYMENT_PENDING') return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Payment Pending</span>;
-    return <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
+    if (paymentStatus === 'SCREENSHOT_UPLOADED') return <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><Camera size={13}/> Screenshot Uploaded (Verify)</span>;
+    if (status === 'CONFIRMED') return <span className="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Confirmed</span>;
+    if (status === 'DELIVERED') return <span className="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Delivered</span>;
+    if (status === 'CANCELLED') return <span className="px-2.5 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Cancelled</span>;
+    if (status === 'PAYMENT_PENDING') return <span className="px-2.5 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Payment Pending</span>;
+    return <span className="px-2.5 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">{status}</span>;
+  };
+
+  const getScreenshotIndicator = (order: any) => {
+    if (order.payment?.status === 'SCREENSHOT_UPLOADED' || order.payment?.screenshotUrl) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-md text-xs font-bold">
+          <Camera size={14} className="text-amber-600" />
+          📸 Uploaded
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-50 text-gray-500 border border-gray-200 rounded-md text-xs font-medium">
+        <Clock size={13} className="text-gray-400" />
+        ⏳ Pending
+      </span>
+    );
   };
 
   return (
@@ -241,11 +258,11 @@ const AdminDashboard = () => {
           <select 
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-black text-gray-900 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-black text-gray-900 bg-white font-medium"
           >
             <option value="ALL" className="text-gray-900 bg-white">All Orders</option>
-            <option value="SCREENSHOT_UPLOADED" className="text-gray-900 bg-white">Needs Verification</option>
-            <option value="PAYMENT_PENDING" className="text-gray-900 bg-white">Payment Pending</option>
+            <option value="SCREENSHOT_UPLOADED" className="text-gray-900 bg-white font-bold text-amber-700">📸 Screenshot Uploaded (Needs Verification)</option>
+            <option value="PAYMENT_PENDING" className="text-gray-900 bg-white">⏳ Payment Pending</option>
             <option value="CONFIRMED" className="text-gray-900 bg-white">Confirmed</option>
             <option value="PREPARING" className="text-gray-900 bg-white">Preparing</option>
             <option value="OUT_FOR_DELIVERY" className="text-gray-900 bg-white">Out for Delivery</option>
@@ -265,6 +282,7 @@ const AdminDashboard = () => {
                 <th className="px-6 py-4 text-sm font-bold text-gray-900">Customer</th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-900">Items</th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-900">Amount</th>
+                <th className="px-6 py-4 text-sm font-bold text-gray-900">Screenshot</th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-900">Status</th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-900">Date</th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-900">Action</th>
@@ -272,9 +290,9 @@ const AdminDashboard = () => {
             </thead>
             <tbody className="divide-y divide-gray-200 text-gray-900">
               {loading ? (
-                <tr><td colSpan={7} className="px-6 py-8 text-center text-gray-600">Loading orders...</td></tr>
+                <tr><td colSpan={8} className="px-6 py-8 text-center text-gray-600">Loading orders...</td></tr>
               ) : filteredOrders.length === 0 ? (
-                <tr><td colSpan={7} className="px-6 py-8 text-center text-gray-600">No orders found</td></tr>
+                <tr><td colSpan={8} className="px-6 py-8 text-center text-gray-600">No orders found</td></tr>
               ) : (
                 filteredOrders.map((order) => (
                   <tr key={order._id || order.orderId} className="hover:bg-gray-50 transition text-gray-900">
@@ -287,6 +305,9 @@ const AdminDashboard = () => {
                       <div>{order.product?.name} ({order.product?.weight || '1200g'}) × {order.product?.quantity}</div>
                     </td>
                     <td className="px-6 py-4 text-sm font-bold text-gray-900">₹{order.payment?.amount}</td>
+                    <td className="px-6 py-4">
+                      {getScreenshotIndicator(order)}
+                    </td>
                     <td className="px-6 py-4">
                       {getStatusBadge(order.orderStatus, order.payment?.status)}
                     </td>

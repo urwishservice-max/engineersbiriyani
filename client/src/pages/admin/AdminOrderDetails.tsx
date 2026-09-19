@@ -173,6 +173,35 @@ const AdminOrderDetails = () => {
           <Trash2 size={16} /> Delete Order
         </button>
       </div>
+
+      {order.payment?.status === 'SCREENSHOT_UPLOADED' && (
+        <div className="mb-6 p-4 bg-amber-50 border-2 border-amber-400 rounded-xl text-amber-900 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-400 text-black rounded-lg font-bold text-lg">📸</div>
+            <div>
+              <p className="font-bold text-base">Payment Screenshot Uploaded by Customer!</p>
+              <p className="text-xs text-amber-800">Review the uploaded payment screenshot below and click 'Verify Payment' to confirm the order.</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleVerify} 
+            disabled={isVerifying}
+            className="px-4 py-2 bg-green-600 text-white font-bold text-sm rounded-lg hover:bg-green-700 transition shadow"
+          >
+            Verify Payment Now
+          </button>
+        </div>
+      )}
+
+      {order.payment?.status === 'PAYMENT_PENDING' && (
+        <div className="mb-6 p-4 bg-gray-50 border border-gray-300 rounded-xl text-gray-700 flex items-center gap-3">
+          <div className="p-2 bg-gray-200 text-gray-700 rounded-lg font-bold">⏳</div>
+          <div>
+            <p className="font-bold text-sm text-gray-900">Payment Pending (Awaiting Screenshot)</p>
+            <p className="text-xs text-gray-600">The customer has proceeded to payment, but has not uploaded their payment screenshot yet.</p>
+          </div>
+        </div>
+      )}
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

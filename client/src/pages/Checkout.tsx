@@ -59,22 +59,44 @@ const Checkout = () => {
       };
 
       let createdOrderId = '';
-      try {
-        const response = await axios.post(`${apiBase}/api/orders`, {
-          customer: customerPayload,
-          quantity,
-          optionType,
-        });
-        
-        if (response.data?.success && response.data?.data?.orderId) {
-          createdOrderId = response.data.data.orderId;
+      let createdOrderData: any = null;
+
+      // Retry up to 3 times to ensure connection to database (handles server cold-starts)
+      let attempts = 3;
+      while (attempts > 0 && !createdOrderId) {
+        try {
+          const response = await axios.post(`${apiBase}/api/orders`, {
+            customer: customerPayload,
+            quantity,
+            optionType,
+          }, { timeout: 12000 });
+          
+          if (response.data?.success && response.data?.data?.orderId) {
+            createdOrderId = response.data.data.orderId;
+            createdOrderData = response.data.data;
+            break;
+          }
+        } catch (err) {
+          console.warn(`Backend API order creation attempt ${4 - attempts} failed:`, err);
+          attempts--;
+          if (attempts > 0) {
+            await new Promise(res => setTimeout(res, 1500));
+          }
         }
-      } catch (err) {
-        console.warn('Backend API request failed, creating local order fallback:', err);
       }
 
-      // Fallback: If backend is offline or returned error, create client-side order
-      if (!createdOrderId) {
+      if (createdOrderData) {
+        // Cache created server order locally so admin and user views are instant
+        localStorage.setItem(`order_${createdOrderId}`, JSON.stringify(createdOrderData));
+        const existingOrdersStr = localStorage.getItem('local_orders');
+        const existingOrders = existingOrdersStr ? JSON.parse(existingOrdersStr) : [];
+        const exists = existingOrders.some((o: any) => o.orderId === createdOrderId);
+        if (!exists) {
+          existingOrders.unshift(createdOrderData);
+          localStorage.setItem('local_orders', JSON.stringify(existingOrders));
+        }
+      } else {
+        // Failsafe Fallback: Create client order locally if server was completely unreachable
         const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
         createdOrderId = `BRY-${dateStr}-${randomStr}`;
