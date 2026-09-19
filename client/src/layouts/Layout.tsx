@@ -10,7 +10,8 @@ const Layout = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const scrollPos = window ? (window.scrollY || window.pageYOffset || 0) : 0;
+      setScrolled(scrollPos > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
