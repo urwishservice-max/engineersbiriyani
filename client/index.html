@@ -7,9 +7,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+      window.addEventListener('error', function(e) {
+        var root = document.getElementById('root');
+        if (root && (!root.children || root.children.length === 0 || root.innerHTML.indexOf('Loading') !== -1)) {
+          root.innerHTML = '<div style="color:#FFB800;background:#000000;padding:30px;text-align:center;font-family:sans-serif;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;"><h2>Engineer\'s Biriyani</h2><p style="color:#aaa;font-size:14px;margin:15px 0;">Loading website...</p><button onclick="location.reload()" style="background:#FFB800;color:#000;border:none;padding:12px 24px;border-radius:20px;font-weight:bold;margin-top:10px;cursor:pointer;">Tap to Reload</button></div>';
+        }
+      });
+    </script>
   </head>
   <body style="background-color: #000000; color: #ffffff; margin: 0; padding: 0;">
-    <div id="root"></div>
+    <div id="root">
+      <div style="color:#FFB800;background:#000000;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;">
+        <h2 style="margin-bottom:10px;font-size:24px;">Engineer's Biriyani</h2>
+        <p style="color:#aaa;font-size:14px;">Loading...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
