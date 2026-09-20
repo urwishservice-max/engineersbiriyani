@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Search } from 'lucide-react';
+import axios from 'axios';
+import { ShoppingCart, Search, Clock } from 'lucide-react';
 
 const menuItems = [
   { id: 1, category: 'Biryani', name: 'Special Chicken Biryani (1200g)', price: '₹239', desc: 'Aromatic basmati rice cooked with 3 to 4 tender chicken pieces, authentic spices, and served with Onion Raita & Kathrika.', img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=400&auto=format&fit=crop', badge: 'Bestseller' },
@@ -14,6 +15,33 @@ const categories = ['All', 'Biryani', 'Sides'];
 const Menu = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+      try {
+        const res = await axios.get(`${apiBase}/api/orders/store-status`);
+        if (res.data?.success && typeof res.data?.data?.isOrdersClosed === 'boolean') {
+          setIsOrdersClosed(res.data.data.isOrdersClosed);
+          localStorage.setItem('store_orders_closed', String(res.data.data.isOrdersClosed));
+        }
+      } catch (e) {
+        // fallback
+      }
+    };
+    fetchStatus();
+
+    const handleUpdate = () => {
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+    };
+    window.addEventListener('store_status_changed', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('store_status_changed', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = activeTab === 'All' || item.category === activeTab;
@@ -23,6 +51,12 @@ const Menu = () => {
 
   return (
     <div className="w-full bg-black min-h-screen text-white font-sans">
+      {isOrdersClosed && (
+        <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-900/90 via-rose-900/90 to-red-900/90 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-semibold border-b border-red-500/30 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
+          <Clock size={16} className="text-red-300 animate-pulse" />
+          <span>Notice: Online orders are currently closed. Viewing menu only.</span>
+        </div>
+      )}
       
       {/* PAGE HEADER */}
       <section 
@@ -117,8 +151,13 @@ const Menu = () => {
                   <p className="text-sm text-white leading-relaxed mb-6 max-w-[260px] flex-1">{item.desc}</p>
                   <div className="flex items-center justify-between w-full max-w-[240px] mt-auto pt-4 border-t border-[#27272A]">
                     <span className="font-bold text-xl text-[#FFB800] tracking-wide">{item.price}</span>
-                    <Link to="/checkout" className="btn-primary py-2 px-4 text-xs">
-                      Order <ShoppingCart className="w-4 h-4" />
+                    <Link 
+                      to="/checkout" 
+                      className={`${
+                        isOrdersClosed ? 'bg-red-800/80 hover:bg-red-700 text-white' : 'btn-primary'
+                      } py-2 px-4 text-xs flex items-center gap-1.5 rounded-full font-bold transition`}
+                    >
+                      {isOrdersClosed ? 'Closed' : 'Order'} <ShoppingCart className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -146,8 +185,13 @@ const Menu = () => {
       {/* CTA BAND */}
       <section className="bg-black py-24 px-6 md:px-12 text-center flex flex-col items-center border-t border-[#27272A]">
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#FFB800] mb-8">Ready to Enjoy Authentic Biriyani?</h2>
-        <Link to="/checkout" className="btn-primary">
-          Order Online Now
+        <Link 
+          to="/checkout" 
+          className={`${
+            isOrdersClosed ? 'bg-red-700 hover:bg-red-600 text-white' : 'btn-primary'
+          } font-bold py-3.5 px-8 rounded-full shadow-lg transition-transform hover:-translate-y-0.5`}
+        >
+          {isOrdersClosed ? 'Orders Are Currently Closed' : 'Order Online Now'}
         </Link>
       </section>
 

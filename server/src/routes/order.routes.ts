@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { createOrder, getOrder, getOrdersByPhone, uploadPaymentScreenshot, submitFeedback, getFeedbacks } from '../controllers/order.controller';
+import { createOrder, getOrder, getOrdersByPhone, uploadPaymentScreenshot, submitFeedback, getFeedbacks, getStoreStatus } from '../controllers/order.controller';
 import { uploadScreenshot } from '../middleware/upload';
 
 const router = Router();
 
+router.get('/store-status', getStoreStatus); // Public store availability status
 router.post('/', createOrder);
 router.get('/feedbacks', getFeedbacks); // Fetch approved feedbacks
 router.get('/phone/:phone', getOrdersByPhone); // Lookup orders by phone number

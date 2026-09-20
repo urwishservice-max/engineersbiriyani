@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Eye, Filter, Trash2, HardDrive, Camera, CheckCircle2, Clock } from 'lucide-react';
+import { Search, Eye, Filter, Trash2, HardDrive, Camera, CheckCircle2, Clock, Power, Store, AlertCircle } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -9,6 +9,11 @@ const AdminDashboard = () => {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [storageUsage, setStorageUsage] = useState<any>(null);
+  
+  // Store orders open / closed state
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  const [isTogglingStore, setIsTogglingStore] = useState(false);
+  const [storeStatusMsg, setStoreStatusMsg] = useState('');
   
   const token = localStorage.getItem('adminToken');
   const navigate = useNavigate();
@@ -74,9 +79,61 @@ const AdminDashboard = () => {
       });
     };
 
+    const fetchStoreStatus = async () => {
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+      try {
+        const response = await axios.get(`${apiBase}/api/admin/store-status`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.data?.success && typeof response.data?.data?.isOrdersClosed === 'boolean') {
+          setIsOrdersClosed(response.data.data.isOrdersClosed);
+          localStorage.setItem('store_orders_closed', String(response.data.data.isOrdersClosed));
+        }
+      } catch (err) {
+        // Try public endpoint if admin token or route timed out
+        try {
+          const publicRes = await axios.get(`${apiBase}/api/orders/store-status`);
+          if (publicRes.data?.success && typeof publicRes.data?.data?.isOrdersClosed === 'boolean') {
+            setIsOrdersClosed(publicRes.data.data.isOrdersClosed);
+            localStorage.setItem('store_orders_closed', String(publicRes.data.data.isOrdersClosed));
+          }
+        } catch (e) {
+          console.warn('Failed to fetch store status:', e);
+        }
+      }
+    };
+
     fetchOrders();
     fetchStorage();
+    fetchStoreStatus();
   }, [token, navigate]);
+
+  const handleToggleOrdersStatus = async () => {
+    const nextStatus = !isOrdersClosed;
+    setIsTogglingStore(true);
+    setIsOrdersClosed(nextStatus);
+    localStorage.setItem('store_orders_closed', String(nextStatus));
+    window.dispatchEvent(new Event('store_status_changed'));
+
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+    try {
+      const response = await axios.patch(
+        `${apiBase}/api/admin/store-status`,
+        { isOrdersClosed: nextStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.data?.success) {
+        setStoreStatusMsg(`Store updated: Orders are now ${nextStatus ? 'CLOSED' : 'OPEN'}!`);
+        setTimeout(() => setStoreStatusMsg(''), 4000);
+      }
+    } catch (err) {
+      console.warn('Server update failed, status preserved locally:', err);
+      setStoreStatusMsg(`Updated locally: Orders are ${nextStatus ? 'CLOSED' : 'OPEN'}`);
+      setTimeout(() => setStoreStatusMsg(''), 4000);
+    } finally {
+      setIsTogglingStore(false);
+    }
+  };
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -164,6 +221,82 @@ const AdminDashboard = () => {
     <div className="text-gray-900">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Orders Dashboard</h1>
+      </div>
+
+      {/* STORE ORDERING STATUS TOGGLE (Admin ON / OFF Control) */}
+      <div className={`rounded-xl p-5 mb-6 border transition-all shadow-sm ${
+        isOrdersClosed 
+          ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200' 
+          : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200'
+      }`}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+              isOrdersClosed 
+                ? 'bg-rose-100 text-rose-600 border border-rose-300' 
+                : 'bg-emerald-100 text-emerald-600 border border-emerald-300 shadow-sm'
+            }`}>
+              <Power size={24} className={isOrdersClosed ? '' : 'animate-pulse text-emerald-600'} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="font-bold text-gray-900 text-lg">Store Ordering Status</span>
+                <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider ${
+                  isOrdersClosed 
+                    ? 'bg-red-600 text-white shadow-sm' 
+                    : 'bg-emerald-600 text-white shadow-sm'
+                }`}>
+                  {isOrdersClosed ? '● Orders Closed' : '● Accepting Orders'}
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                {isOrdersClosed
+                  ? 'Orders are CLOSED. Customer booking & checkout pages show "Orders Are Closed".'
+                  : 'Orders are OPEN. Customers can access booking & payment pages to place their orders.'}
+              </p>
+              {storeStatusMsg && (
+                <span className="text-xs font-bold text-emerald-700 mt-1.5 inline-block bg-white/80 px-2 py-0.5 rounded border border-emerald-300">
+                  ✓ {storeStatusMsg}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 self-end md:self-center">
+            <button
+              onClick={handleToggleOrdersStatus}
+              disabled={isTogglingStore}
+              className={`relative inline-flex h-9 w-20 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                isOrdersClosed ? 'bg-gray-300 focus:ring-gray-400' : 'bg-emerald-500 focus:ring-emerald-500'
+              } ${isTogglingStore ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
+              role="switch"
+              aria-checked={!isOrdersClosed}
+              title={isOrdersClosed ? 'Click to Turn ON Orders' : 'Click to Turn OFF Orders'}
+            >
+              <span
+                className={`inline-block h-7 w-7 transform rounded-full bg-white shadow-md transition-transform flex items-center justify-center font-black text-[10px] ${
+                  isOrdersClosed 
+                    ? 'translate-x-1 text-gray-500' 
+                    : 'translate-x-12 text-emerald-600'
+                }`}
+              >
+                {isOrdersClosed ? 'OFF' : 'ON'}
+              </span>
+            </button>
+            <button
+              onClick={handleToggleOrdersStatus}
+              disabled={isTogglingStore}
+              className={`px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 ${
+                isOrdersClosed
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95'
+                  : 'bg-red-600 hover:bg-red-700 text-white active:scale-95'
+              }`}
+            >
+              <Power size={15} />
+              {isOrdersClosed ? 'Turn ON Orders' : 'Turn OFF Orders'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Storage Widget */}

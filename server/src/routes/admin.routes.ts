@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { loginAdmin } from '../controllers/admin.controller';
 import { verifyAdmin } from '../middleware/auth';
 import Order from '../models/Order';
+import Setting from '../models/Setting';
 import { deletePaymentScreenshot, getStorageUsage } from '../services/cloudinary.service';
 import { sendPaymentConfirmedNotification, sendOutForDeliveryNotification } from '../services/whatsapp.service';
 
@@ -205,6 +206,62 @@ router.get('/storage', async (req, res) => {
     res.status(200).json({ success: true, data: usage });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error fetching storage' });
+  }
+});
+
+// Get Store Status (Admin)
+router.get('/store-status', async (req, res) => {
+  try {
+    const setting = await Setting.findOne({ key: 'store_settings' });
+    res.status(200).json({
+      success: true,
+      data: {
+        isOrdersClosed: setting ? Boolean(setting.isOrdersClosed) : false,
+        closedMessage: setting?.closedMessage || 'Orders are currently closed. Please check back later!',
+        updatedAt: setting?.updatedAt || new Date()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch store status' });
+  }
+});
+
+// Update Store Status (Orders Open / Closed Toggle)
+router.patch('/store-status', async (req, res) => {
+  try {
+    const { isOrdersClosed, closedMessage } = req.body;
+    
+    let setting = await Setting.findOne({ key: 'store_settings' });
+    if (!setting) {
+      setting = new Setting({
+        key: 'store_settings',
+        isOrdersClosed: Boolean(isOrdersClosed),
+        closedMessage: closedMessage || 'Orders are currently closed. Please check back later!',
+      });
+    } else {
+      if (typeof isOrdersClosed === 'boolean') {
+        setting.isOrdersClosed = isOrdersClosed;
+      }
+      if (closedMessage) {
+        setting.closedMessage = closedMessage;
+      }
+      setting.updatedAt = new Date();
+    }
+
+    await setting.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Orders are now ${setting.isOrdersClosed ? 'CLOSED' : 'OPEN'}`,
+      data: {
+        isOrdersClosed: setting.isOrdersClosed,
+        closedMessage: setting.closedMessage,
+        updatedAt: setting.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error('Update Store Status Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update store status' });
   }
 });
 

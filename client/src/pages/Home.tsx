@@ -1,11 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { Clock } from 'lucide-react';
 
 const Home: React.FC = () => {
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+      try {
+        const res = await axios.get(`${apiBase}/api/orders/store-status`);
+        if (res.data?.success && typeof res.data?.data?.isOrdersClosed === 'boolean') {
+          setIsOrdersClosed(res.data.data.isOrdersClosed);
+          localStorage.setItem('store_orders_closed', String(res.data.data.isOrdersClosed));
+        }
+      } catch (e) {
+        // use local cache
+      }
+    };
+    fetchStatus();
+
+    const handleUpdate = () => {
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+    };
+    window.addEventListener('store_status_changed', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('store_status_changed', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
   return (
     <div className="w-full bg-black text-white font-sans overflow-x-hidden min-h-screen">
+      {/* ORDERS CLOSED ANNOUNCEMENT BANNER */}
+      {isOrdersClosed && (
+        <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-900/90 via-rose-900/90 to-red-900/90 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-semibold border-b border-red-500/30 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
+          <Clock size={16} className="text-red-300 animate-pulse" />
+          <span>Notice: Online bookings are currently closed. Check back soon for the next slot!</span>
+        </div>
+      )}
+
       {/* HERO SECTION (Reference Screenshot 1) */}
-      <section className="min-h-screen flex items-center justify-center pt-28 pb-16 px-6 sm:px-12 bg-black relative">
+      <section className={`min-h-screen flex items-center justify-center pt-28 pb-16 px-6 sm:px-12 bg-black relative ${isOrdersClosed ? 'mt-8' : ''}`}>
         <div className="max-w-[1250px] w-full grid grid-cols-1 md:grid-cols-2 items-center gap-12 mx-auto">
           {/* Left Text Area */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
@@ -23,9 +61,13 @@ const Home: React.FC = () => {
             </p>
             <Link 
               to="/checkout" 
-              className="bg-[#f5a623] hover:bg-[#fbbd45] text-black font-extrabold text-xs sm:text-sm tracking-[1.5px] uppercase px-9 py-4 rounded-full shadow-[0_4px_20px_rgba(245,166,35,0.25)] transition-all hover:-translate-y-0.5 inline-block"
+              className={`${
+                isOrdersClosed 
+                  ? 'bg-red-700 hover:bg-red-600 text-white shadow-[0_4px_20px_rgba(239,68,68,0.25)]' 
+                  : 'bg-[#f5a623] hover:bg-[#fbbd45] text-black shadow-[0_4px_20px_rgba(245,166,35,0.25)]'
+              } font-extrabold text-xs sm:text-sm tracking-[1.5px] uppercase px-9 py-4 rounded-full transition-all hover:-translate-y-0.5 inline-block`}
             >
-              EXPLORE MENU
+              {isOrdersClosed ? 'ORDERS CLOSED' : 'EXPLORE MENU'}
             </Link>
           </div>
 
@@ -68,9 +110,13 @@ const Home: React.FC = () => {
 
             <Link 
               to="/checkout?type=600g"
-              className="w-full bg-[#f5a623] hover:bg-[#fbbd45] text-black font-extrabold text-sm tracking-[1.5px] uppercase py-3.5 rounded-full text-center shadow-[0_4px_15px_rgba(245,166,35,0.2)] transition-all hover:-translate-y-0.5 inline-block"
+              className={`w-full ${
+                isOrdersClosed 
+                  ? 'bg-red-700 hover:bg-red-600 text-white shadow-[0_4px_15px_rgba(239,68,68,0.2)]' 
+                  : 'bg-[#f5a623] hover:bg-[#fbbd45] text-black shadow-[0_4px_15px_rgba(245,166,35,0.2)]'
+              } font-extrabold text-sm tracking-[1.5px] uppercase py-3.5 rounded-full text-center transition-all hover:-translate-y-0.5 inline-block`}
             >
-              ORDER NOW
+              {isOrdersClosed ? 'ORDERS CLOSED' : 'ORDER NOW'}
             </Link>
           </div>
 
@@ -94,9 +140,13 @@ const Home: React.FC = () => {
 
             <Link 
               to="/checkout?type=1200g"
-              className="w-full bg-[#f5a623] hover:bg-[#fbbd45] text-black font-extrabold text-sm tracking-[1.5px] uppercase py-3.5 rounded-full text-center shadow-[0_4px_15px_rgba(245,166,35,0.2)] transition-all hover:-translate-y-0.5 inline-block"
+              className={`w-full ${
+                isOrdersClosed 
+                  ? 'bg-red-700 hover:bg-red-600 text-white shadow-[0_4px_15px_rgba(239,68,68,0.2)]' 
+                  : 'bg-[#f5a623] hover:bg-[#fbbd45] text-black shadow-[0_4px_15px_rgba(245,166,35,0.2)]'
+              } font-extrabold text-sm tracking-[1.5px] uppercase py-3.5 rounded-full text-center transition-all hover:-translate-y-0.5 inline-block`}
             >
-              ORDER NOW
+              {isOrdersClosed ? 'ORDERS CLOSED' : 'ORDER NOW'}
             </Link>
           </div>
         </div>

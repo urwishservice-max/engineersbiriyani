@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Order from '../models/Order';
+import Setting from '../models/Setting';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 
@@ -16,6 +17,16 @@ const generateOrderId = (): string => {
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
+    // Check if orders are closed
+    const setting = await Setting.findOne({ key: 'store_settings' });
+    if (setting && setting.isOrdersClosed) {
+      res.status(403).json({
+        success: false,
+        message: setting.closedMessage || 'Orders are currently closed. Please check back later!'
+      });
+      return;
+    }
+
     const { customer, quantity, optionType = '1200g' } = req.body;
 
     const customerName = customer?.name || 'Customer';
@@ -245,5 +256,21 @@ export const getFeedbacks = async (req: Request, res: Response): Promise<void> =
   } catch (error: any) {
     console.error('Get Feedbacks Error:', error);
     res.status(500).json({ success: false, message: 'Something went wrong retrieving feedbacks' });
+  }
+};
+
+export const getStoreStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const setting = await Setting.findOne({ key: 'store_settings' });
+    res.status(200).json({
+      success: true,
+      data: {
+        isOrdersClosed: setting ? Boolean(setting.isOrdersClosed) : false,
+        closedMessage: setting?.closedMessage || 'Orders are currently closed. Please check back later!',
+      }
+    });
+  } catch (error: any) {
+    console.error('Get Store Status Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve store status' });
   }
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { UploadCloud, CheckCircle, XCircle } from 'lucide-react';
+import { UploadCloud, CheckCircle, XCircle, AlertTriangle, Store, Clock } from 'lucide-react';
 
 interface OrderDetails {
   orderId: string;
@@ -31,10 +31,25 @@ const Payment = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
   
   const upiId = import.meta.env.VITE_UPI_ID || 'amjathali003-1@okicici';
 
   useEffect(() => {
+    const fetchStoreStatus = async () => {
+      const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+      try {
+        const res = await axios.get(`${apiBase}/api/orders/store-status`);
+        if (res.data?.success && typeof res.data?.data?.isOrdersClosed === 'boolean') {
+          setIsOrdersClosed(res.data.data.isOrdersClosed);
+          localStorage.setItem('store_orders_closed', String(res.data.data.isOrdersClosed));
+        }
+      } catch (e) {
+        // use cached state
+      }
+    };
+    fetchStoreStatus();
+
     const fetchOrder = async () => {
       const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
       try {
@@ -220,14 +235,49 @@ const Payment = () => {
   }
 
   if (!order) {
+    if (isOrdersClosed) {
+      return (
+        <div className="flex-1 flex flex-col items-center justify-center pt-28 pb-16 px-4 w-full bg-black text-white min-h-screen text-center">
+          <div className="bg-[#121212] border border-red-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-5 text-red-400">
+              <Store size={30} />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Orders Are Closed</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Our kitchen is currently not accepting new orders or payments. Please check back later!
+            </p>
+            <div className="flex flex-col gap-3">
+              <Link to="/track" className="btn-primary py-3 text-xs uppercase tracking-wider">
+                Track Existing Order
+              </Link>
+              <Link to="/" className="text-gray-400 hover:text-white text-xs underline py-2">
+                Return to Home
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return <div className="flex-1 flex justify-center items-center pt-28 text-red-500 font-bold bg-black">{error}</div>;
   }
 
   return (
     <div className="flex-1 flex flex-col items-center pt-28 pb-16 px-4 w-full bg-black text-white min-h-screen">
       <h1 className="text-4xl font-bold mb-4 text-[#FFB800]">Payment Required</h1>
+
+      {isOrdersClosed && (
+        <div className="w-full max-w-xl mb-6 bg-amber-950/70 border border-amber-500/50 rounded-2xl p-4 flex items-start gap-3 shadow-lg">
+          <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+          <div className="text-xs sm:text-sm">
+            <span className="font-bold text-amber-300 block mb-0.5">Store Notice: New orders are currently closed</span>
+            <span className="text-gray-300">
+              New bookings are currently paused. Since you already initiated this booking, please complete your payment screenshot upload below to secure your biriyani!
+            </span>
+          </div>
+        </div>
+      )}
       
-      <div className="brand-card w-full max-w-xl p-8 mt-4 border border-[#FFB800]/40 shadow-[0_0_35px_rgba(255,107,0,0.15)] bg-[#121212]">
+      <div className="brand-card w-full max-w-xl p-8 mt-2 border border-[#FFB800]/40 shadow-[0_0_35px_rgba(255,107,0,0.15)] bg-[#121212]">
         <div className="text-center mb-8 pb-6 border-b border-[#27272A]">
           <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Order ID</p>
           <p className="font-mono text-xl font-bold text-white">{order.orderId}</p>

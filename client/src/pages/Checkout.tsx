@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
-import { ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Store, Clock, PhoneCall, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 
 const LOCATIONS = [
   'CIT - Coimbatore Institute of Technology, Peelamedu',
@@ -34,6 +34,44 @@ const Checkout = () => {
   const [optionType, setOptionType] = useState<'600g' | '1200g'>(initialOption);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
+
+  // Store ordering status
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  const [closedMessage, setClosedMessage] = useState<string>('Orders are currently closed. Please check back later!');
+  const [checkingStatus, setCheckingStatus] = useState<boolean>(false);
+
+  const fetchStoreStatus = async () => {
+    setCheckingStatus(true);
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+    try {
+      const res = await axios.get(`${apiBase}/api/orders/store-status`, { timeout: 6000 });
+      if (res.data?.success && typeof res.data?.data?.isOrdersClosed === 'boolean') {
+        setIsOrdersClosed(res.data.data.isOrdersClosed);
+        if (res.data.data.closedMessage) {
+          setClosedMessage(res.data.data.closedMessage);
+        }
+        localStorage.setItem('store_orders_closed', String(res.data.data.isOrdersClosed));
+      }
+    } catch (err) {
+      console.warn('Could not fetch store status, falling back to cached value:', err);
+    } finally {
+      setCheckingStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStoreStatus();
+    const handleStorageChange = () => {
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+    };
+    window.addEventListener('store_status_changed', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('store_status_changed', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   const currentOption = OPTIONS[optionType];
   const totalAmount = currentOption.price * quantity;
 
@@ -45,6 +83,10 @@ const Checkout = () => {
   });
 
   const onSubmit = async (data: CheckoutFormValues) => {
+    if (isOrdersClosed) {
+      setApiError('Orders are currently closed. We are not accepting new orders at this moment.');
+      return;
+    }
     setIsSubmitting(true);
     setApiError('');
     try {
@@ -138,6 +180,92 @@ const Checkout = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (isOrdersClosed) {
+    return (
+      <div className="w-full bg-black min-h-screen text-white font-sans">
+        {/* PAGE HEADER */}
+        <section className="bg-gradient-to-b from-black via-[#080808] to-[#0A0A0A] min-h-[25vh] flex flex-col justify-center pt-24 relative overflow-hidden text-center px-6 border-b border-[#27272A]">
+          <div className="relative z-10 max-w-3xl mx-auto py-8">
+            <span className="eyebrow mx-auto justify-center flex mb-3 text-red-400 font-extrabold tracking-widest uppercase text-xs">
+              — NOTICE —
+            </span>
+            <h1 className="text-4xl md:text-5xl font-bold text-red-500 mb-3 leading-tight font-serif">
+              Orders Are Closed
+            </h1>
+            <p className="text-gray-400 text-base flex items-center justify-center gap-2">
+              <Clock className="w-5 h-5 text-red-400" />
+              We are currently not taking new bookings.
+            </p>
+          </div>
+        </section>
+
+        {/* CLOSED CONTENT */}
+        <section className="py-20 px-6 md:px-12 bg-[#0A0A0A] flex items-center justify-center">
+          <div className="max-w-2xl w-full mx-auto text-center">
+            <div className="bg-[#121212] border border-red-500/30 rounded-3xl p-8 md:p-12 shadow-[0_10px_40px_rgba(239,68,68,0.15)] relative overflow-hidden">
+              <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-6 text-red-400 shadow-inner">
+                <Store size={38} className="text-red-400" />
+              </div>
+
+              <div className="inline-block px-4 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-black uppercase tracking-widest mb-4 border border-red-500/30">
+                Kitchen Currently Offline
+              </div>
+
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                We're Not Accepting Orders Right Now
+              </h2>
+
+              <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-lg mx-auto">
+                {closedMessage}
+              </p>
+
+              <div className="bg-[#18181B] p-5 rounded-2xl border border-white/10 mb-8 text-left flex items-start gap-4">
+                <div className="p-2 rounded-xl bg-[#FFB800]/10 text-[#FFB800] mt-0.5">
+                  <AlertCircle size={20} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm">Already placed an order?</h4>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Don't worry! Your confirmed order is being freshly prepared. You can track your existing order anytime with your mobile number.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  to="/track"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#FFB800] hover:bg-[#ffc633] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-transform hover:-translate-y-0.5"
+                >
+                  Track Existing Order <ArrowRight size={16} />
+                </Link>
+                <Link
+                  to="/menu"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#27272A] hover:bg-[#333338] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-white/10 transition"
+                >
+                  Explore Menu
+                </Link>
+                <button
+                  onClick={fetchStoreStatus}
+                  disabled={checkingStatus}
+                  className="w-full sm:w-auto px-5 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 font-medium text-xs flex items-center justify-center gap-2 border border-white/5 transition"
+                  title="Check if admin opened orders"
+                >
+                  <RefreshCw size={14} className={checkingStatus ? 'animate-spin text-[#FFB800]' : ''} />
+                  {checkingStatus ? 'Checking...' : 'Check Status'}
+                </button>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-center gap-2 text-xs text-gray-400">
+                <PhoneCall size={14} className="text-[#FFB800]" />
+                <span>Need assistance? <Link to="/contact" className="text-[#FFB800] underline font-bold">Contact Support</Link></span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-black min-h-screen text-white font-sans">
