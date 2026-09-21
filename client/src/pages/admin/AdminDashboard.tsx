@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Eye, Filter, Trash2, HardDrive, Camera, CheckCircle2, Clock, Power, Store, AlertCircle } from 'lucide-react';
+import { Search, Eye, Filter, Trash2, HardDrive, Camera, CheckCircle2, Clock, Power, Store, AlertCircle, FileSpreadsheet, ExternalLink, Send, Check } from 'lucide-react';
+import { getGoogleSheetWebhookUrl, setGoogleSheetWebhookUrl, sendOrderToGoogleSheet } from '../../services/googleSheet.service';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -9,6 +10,11 @@ const AdminDashboard = () => {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [storageUsage, setStorageUsage] = useState<any>(null);
+  
+  // Google Sheets integration state
+  const [sheetWebhookUrl, setSheetWebhookUrl] = useState<string>(getGoogleSheetWebhookUrl());
+  const [webhookSavedMsg, setWebhookSavedMsg] = useState('');
+  const [isTestingWebhook, setIsTestingWebhook] = useState(false);
   
   // Store orders open / closed state - default to closed until turned on
   const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
@@ -179,6 +185,41 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleSaveWebhook = () => {
+    setGoogleSheetWebhookUrl(sheetWebhookUrl);
+    setWebhookSavedMsg('✓ Google Sheets Webhook URL saved successfully!');
+    setTimeout(() => setWebhookSavedMsg(''), 4000);
+  };
+
+  const handleTestWebhook = async () => {
+    if (!sheetWebhookUrl) {
+      alert('Please enter your Google Apps Script Webhook URL first.');
+      return;
+    }
+    setIsTestingWebhook(true);
+    setGoogleSheetWebhookUrl(sheetWebhookUrl);
+    try {
+      await sendOrderToGoogleSheet({
+        orderId: `TEST-${Math.floor(1000 + Math.random() * 9000)}`,
+        customerName: 'Test Admin Ping',
+        customerPhone: '9876543210',
+        location: 'Admin Dashboard Test',
+        productName: 'Chicken Biriyani (Test)',
+        quantity: 1,
+        totalAmount: 239,
+        paymentStatus: 'TEST_ROW_VERIFIED',
+        screenshotUrl: 'https://res.cloudinary.com/enqntmyw/image/upload/sample.jpg',
+        deliveryDate: '27-Sep-26 (Sunday)'
+      });
+      setWebhookSavedMsg('✓ Test order sent to Google Sheet! Check your spreadsheet.');
+      setTimeout(() => setWebhookSavedMsg(''), 5000);
+    } catch (e) {
+      alert('Could not send test row. Please verify your Webhook URL.');
+    } finally {
+      setIsTestingWebhook(false);
+    }
+  };
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
       order.orderId.toLowerCase().includes(search.toLowerCase()) ||
@@ -297,6 +338,61 @@ const AdminDashboard = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* GOOGLE SHEETS LIVE SYNC WIDGET */}
+      <div className="bg-white rounded-xl p-5 mb-6 border border-emerald-300 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-300">
+              <FileSpreadsheet size={24} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-gray-900 text-base">Google Sheets Live Sync</h3>
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
+                  sheetWebhookUrl 
+                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
+                    : 'bg-amber-100 text-amber-800 border-amber-300'
+                }`}>
+                  {sheetWebhookUrl ? '● Active' : '○ Webhook Not Set'}
+                </span>
+              </div>
+              <p className="text-xs text-gray-600 mt-0.5">
+                Every customer order & Cloudinary payment screenshot syncs directly to your Google Sheet in real time.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+            <input
+              type="text"
+              placeholder="Paste Google Web App URL (https://script.google.com/...)"
+              value={sheetWebhookUrl}
+              onChange={(e) => setSheetWebhookUrl(e.target.value)}
+              className="px-3.5 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600 w-full lg:w-80 bg-gray-50 text-gray-900 font-mono"
+            />
+            <button
+              onClick={handleSaveWebhook}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow flex items-center justify-center gap-1.5 shrink-0"
+            >
+              <Check size={14} /> Save URL
+            </button>
+            <button
+              onClick={handleTestWebhook}
+              disabled={isTestingWebhook || !sheetWebhookUrl}
+              className="px-3.5 py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-lg transition shadow flex items-center justify-center gap-1.5 shrink-0 disabled:opacity-50"
+            >
+              <Send size={14} /> {isTestingWebhook ? 'Sending...' : 'Test Sync'}
+            </button>
+          </div>
+        </div>
+
+        {webhookSavedMsg && (
+          <div className="mt-3 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+            {webhookSavedMsg}
+          </div>
+        )}
       </div>
 
       {/* Storage Widget */}

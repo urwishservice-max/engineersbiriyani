@@ -38,7 +38,7 @@ const Home: React.FC = () => {
       {isOrdersClosed && (
         <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-900/90 via-rose-900/90 to-red-900/90 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-semibold border-b border-red-500/30 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
           <Clock size={16} className="text-red-300 animate-pulse" />
-          <span>Notice: Online bookings are currently closed. Check back soon for the next slot!</span>
+          <span>Notice: Online bookings are currently closed. Next Delivery Date: 27-Sep-26 (Sunday)</span>
         </div>
       )}
 
@@ -47,6 +47,10 @@ const Home: React.FC = () => {
         <div className="max-w-[1250px] w-full grid grid-cols-1 md:grid-cols-2 items-center gap-12 mx-auto">
           {/* Left Text Area */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="inline-flex items-center gap-2 bg-[#f5a623]/15 border border-[#f5a623]/40 text-[#f5a623] px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+              <Clock size={13} className="animate-pulse" />
+              <span>Next Delivery: 27-Sep-26 (Sunday)</span>
+            </div>
             <span className="text-[#f5a623] text-sm font-extrabold tracking-[3px] uppercase mb-6">
               ENGINEERED FLAVORS
             </span>

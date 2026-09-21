@@ -216,6 +216,10 @@ const Checkout = () => {
                 We're Not Accepting Orders Right Now
               </h2>
 
+              <div className="inline-block px-4 py-1.5 rounded-full bg-[#FFB800]/10 border border-[#FFB800]/30 text-[#FFB800] text-xs font-bold mb-4">
+                Next Delivery Batch: Sunday, 27-Sep-26
+              </div>
+
               <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-lg mx-auto">
                 {closedMessage}
               </p>
@@ -273,7 +277,11 @@ const Checkout = () => {
       {/* PAGE HEADER */}
       <section className="bg-gradient-to-b from-black via-[#080808] to-[#0A0A0A] min-h-[25vh] flex flex-col justify-center pt-24 relative overflow-hidden text-center px-6 border-b border-[#27272A]">
         <div className="relative z-10 max-w-3xl mx-auto py-8">
-          <span className="eyebrow mx-auto justify-center flex mb-3">— ALMOST THERE —</span>
+          <span className="eyebrow mx-auto justify-center flex mb-2">— ALMOST THERE —</span>
+          <div className="inline-flex items-center gap-2 bg-[#FFB800]/20 border border-[#FFB800]/50 text-[#FFB800] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 mx-auto">
+            <Clock className="w-3.5 h-3.5 animate-pulse" />
+            <span>Delivery Date: Sunday, 27-Sep-26 (Lunch)</span>
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-[#FFB800] mb-3 leading-tight">
             Secure Checkout
           </h1>

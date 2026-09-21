@@ -54,7 +54,7 @@ const Menu = () => {
       {isOrdersClosed && (
         <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-900/90 via-rose-900/90 to-red-900/90 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-semibold border-b border-red-500/30 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
           <Clock size={16} className="text-red-300 animate-pulse" />
-          <span>Notice: Online orders are currently closed. Viewing menu only.</span>
+          <span>Notice: Online orders are currently closed. Next Delivery Date: 27-Sep-26 (Sunday)</span>
         </div>
       )}
       
@@ -64,9 +64,15 @@ const Menu = () => {
       >
         <div className="relative z-10 max-w-4xl mx-auto py-16 flex flex-col items-center">
           
-          <div className="bg-[#121212] rounded-full px-5 py-2 flex items-center gap-2 mb-8 border border-[#FFB800]/40">
-             <div className="w-2.5 h-2.5 rounded-full bg-[#FFB800] animate-pulse"></div>
-             <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-[#FFB800]">OUR MENU</span>
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+            <div className="bg-[#121212] rounded-full px-5 py-2 flex items-center gap-2 border border-[#FFB800]/40">
+               <div className="w-2.5 h-2.5 rounded-full bg-[#FFB800] animate-pulse"></div>
+               <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-[#FFB800]">OUR MENU</span>
+            </div>
+            <div className="bg-[#FFB800]/15 rounded-full px-4 py-2 flex items-center gap-2 border border-[#FFB800]/40 text-[#FFB800]">
+               <Clock size={14} />
+               <span className="text-[11px] uppercase tracking-[0.15em] font-bold">Delivery: Sunday, 27-Sep-26</span>
+            </div>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-[#FFB800] mb-6">

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { UploadCloud, CheckCircle, XCircle, AlertTriangle, Store, Clock } from 'lucide-react';
+import { uploadScreenshotDirectly } from '../services/cloudinaryDirect.service';
+import { sendOrderToGoogleSheet } from '../services/googleSheet.service';
 
 interface OrderDetails {
   orderId: string;
@@ -116,39 +118,76 @@ const Payment = () => {
     
     setIsUploading(true);
     setError('');
-    
-    const formData = new FormData();
-    formData.append('screenshot', file);
-    
-    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
-    let uploadedSuccessfully = false;
-    let serverUpdatedOrder: any = null;
 
-    // Retry up to 3 times to ensure upload to backend MongoDB
-    let attempts = 3;
-    while (attempts > 0 && !uploadedSuccessfully) {
+    let screenshotUrl = '';
+    let cloudinaryPublicId = '';
+
+    // 1. Direct Cloudinary Upload (Ultra-fast, direct from browser, no cold-start)
+    try {
+      const cRes = await uploadScreenshotDirectly(file);
+      if (cRes?.url) {
+        screenshotUrl = cRes.url;
+        cloudinaryPublicId = cRes.publicId;
+      }
+    } catch (cErr) {
+      console.warn('Direct Cloudinary upload error:', cErr);
+    }
+
+    // 2. Failsafe: convert to base64 if Cloudinary had an issue
+    if (!screenshotUrl) {
       try {
-        const response = await axios.post(`${apiBase}/api/orders/${orderId}/payment-screenshot`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          timeout: 20000
+        screenshotUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
         });
-        
-        if (response.data?.success) {
-          uploadedSuccessfully = true;
-          serverUpdatedOrder = response.data.data;
-          break;
-        }
-      } catch (err: any) {
-        console.warn(`Backend upload screenshot attempt ${4 - attempts} failed:`, err);
-        attempts--;
-        if (attempts > 0) {
-          await new Promise(res => setTimeout(res, 1500));
-        }
+      } catch (e) {
+        console.error('Base64 conversion failed:', e);
       }
     }
 
+    const currentOrderData = order || {
+      orderId,
+      customer: { name: 'Customer', phone: '', location: '' },
+      product: { name: 'Chicken Biriyani', quantity: 1 },
+      payment: { amount: 0, status: 'SCREENSHOT_UPLOADED' }
+    };
+
+    const updatedPayment = {
+      method: 'UPI',
+      amount: currentOrderData.payment?.amount || 0,
+      status: 'SCREENSHOT_UPLOADED',
+      screenshotUrl: screenshotUrl,
+      screenshotPublicId: cloudinaryPublicId,
+      uploadedAt: new Date().toISOString()
+    };
+
+    const finalOrderPayload = {
+      ...currentOrderData,
+      orderId,
+      payment: updatedPayment,
+      orderStatus: 'PAYMENT_VERIFICATION'
+    };
+
+    // 3. Send Order with clickable Cloudinary Screenshot link to Google Sheet Webhook
+    try {
+      await sendOrderToGoogleSheet({
+        orderId: orderId || '',
+        customerName: currentOrderData.customer?.name || 'Customer',
+        customerPhone: currentOrderData.customer?.phone || '',
+        location: currentOrderData.customer?.location || '',
+        productName: currentOrderData.product?.name || 'Chicken Biriyani',
+        quantity: currentOrderData.product?.quantity || 1,
+        totalAmount: currentOrderData.payment?.amount || 0,
+        paymentStatus: 'PAID & SCREENSHOT_UPLOADED',
+        screenshotUrl: screenshotUrl.startsWith('http') ? screenshotUrl : 'Uploaded via Base64',
+        deliveryDate: '27-Sep-26 (Sunday)'
+      });
+    } catch (gsErr) {
+      console.warn('Google Sheet dispatch error:', gsErr);
+    }
+
+    // 4. Update local storage for instant customer & admin visibility
     const updateLocalStorageOrder = (updatedFields: any) => {
       const saved = localStorage.getItem(`order_${orderId}`);
       if (saved) {
@@ -169,65 +208,41 @@ const Payment = () => {
           if (idx !== -1) {
             localOrders[idx] = { ...localOrders[idx], ...updatedFields };
             localStorage.setItem('local_orders', JSON.stringify(localOrders));
+          } else {
+            localOrders.unshift({ ...currentOrderData, ...updatedFields });
+            localStorage.setItem('local_orders', JSON.stringify(localOrders));
           }
         } catch (e) {
           console.error(e);
         }
       }
     };
+    updateLocalStorageOrder(finalOrderPayload);
 
-    const triggerWhatsAppRedirect = (targetOrder: any) => {
-      const ownerPhone = '919360867908';
-      const cName = targetOrder?.customer?.name || order?.customer?.name || 'Customer';
-      const cPhone = targetOrder?.customer?.phone || order?.customer?.phone || '';
-      const pName = targetOrder?.product?.name || order?.product?.name || 'Biriyani';
-      const qty = targetOrder?.product?.quantity || order?.product?.quantity || 1;
-      const amount = targetOrder?.payment?.amount || order?.payment?.amount || 0;
-      const oId = targetOrder?.orderId || orderId;
+    // 5. Dual-sync to MongoDB in background if server is awake
+    const apiBase = import.meta.env.VITE_API_URL || 'https://engineersbiriyani.onrender.com';
+    const formData = new FormData();
+    formData.append('screenshot', file);
+    axios.post(`${apiBase}/api/orders/${orderId}/payment-screenshot`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 10000
+    }).catch(bErr => console.warn('Background MongoDB sync note:', bErr));
 
-      const message = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${oId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\n\nPlease verify my payment!`;
-      const waUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`;
+    // 6. WhatsApp trigger: Open WhatsApp IMMEDIATELY directly
+    const ownerPhone = '919360867908';
+    const cName = finalOrderPayload.customer?.name || order?.customer?.name || 'Customer';
+    const cPhone = finalOrderPayload.customer?.phone || order?.customer?.phone || '';
+    const pName = finalOrderPayload.product?.name || order?.product?.name || 'Biriyani';
+    const qty = finalOrderPayload.product?.quantity || order?.product?.quantity || 1;
+    const amount = finalOrderPayload.payment?.amount || order?.payment?.amount || 0;
+    const oId = finalOrderPayload.orderId || orderId;
 
-      try {
-        window.open(waUrl, '_blank');
-      } catch (e) {
-        console.warn('Pop-up blocked or unable to auto-open WhatsApp:', e);
-      }
-    };
+    const message = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${oId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\nDelivery Date: 27-Sep-26 (Sunday)\n\nPlease verify my payment!`;
+    const waUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`;
 
-    if (uploadedSuccessfully && serverUpdatedOrder) {
-      updateLocalStorageOrder({
-        payment: serverUpdatedOrder.payment,
-        orderStatus: serverUpdatedOrder.orderStatus
-      });
-      triggerWhatsAppRedirect(serverUpdatedOrder);
-      setIsUploading(false);
-      navigate(`/order-success/${orderId}?wa=1`);
-      return;
-    }
-
-    // Failsafe Fallback: Convert screenshot image file to Base64 Data URL for local persistence
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Url = reader.result as string;
-      const fallbackPayload = {
-        ...order,
-        orderId,
-        payment: {
-          method: 'UPI',
-          amount: order?.payment?.amount || 0,
-          status: 'SCREENSHOT_UPLOADED',
-          screenshotUrl: base64Url,
-          uploadedAt: new Date().toISOString()
-        },
-        orderStatus: 'PAYMENT_VERIFICATION'
-      };
-      updateLocalStorageOrder(fallbackPayload);
-      triggerWhatsAppRedirect(fallbackPayload);
-      setIsUploading(false);
-      navigate(`/order-success/${orderId}?wa=1`);
-    };
-    reader.readAsDataURL(file);
+    setIsUploading(false);
+    // Instant WhatsApp redirect
+    window.location.href = waUrl;
   };
 
   if (loading) {
@@ -280,7 +295,11 @@ const Payment = () => {
       <div className="brand-card w-full max-w-xl p-8 mt-2 border border-[#FFB800]/40 shadow-[0_0_35px_rgba(255,107,0,0.15)] bg-[#121212]">
         <div className="text-center mb-8 pb-6 border-b border-[#27272A]">
           <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Order ID</p>
-          <p className="font-mono text-xl font-bold text-white">{order.orderId}</p>
+          <p className="font-mono text-xl font-bold text-white mb-2">{order.orderId}</p>
+          <div className="inline-flex items-center gap-1.5 text-xs text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/30 px-3 py-1 rounded-full font-bold">
+            <Clock size={12} />
+            <span>Delivery: Sunday, 27-Sep-26</span>
+          </div>
         </div>
         
         <div className="bg-[#18181B] p-6 rounded-2xl mb-8 text-center border border-[#27272A]">
