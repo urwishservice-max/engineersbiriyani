@@ -44,7 +44,7 @@ const OrderSuccess = () => {
           const qty = loadedOrder.product?.quantity || 1;
           const amount = loadedOrder.payment?.amount || 0;
 
-          const text = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${orderId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\n\nPlease verify my payment!`;
+          const text = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${orderId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\nDelivery Date: 27-Sep-26 (Sunday)\n\nPlease verify my payment!`;
           const waUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(text)}`;
 
           try {
@@ -68,7 +68,7 @@ const OrderSuccess = () => {
     const qty = order.product?.quantity || 1;
     const amount = order.payment?.amount || 0;
 
-    const text = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${orderId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\n\nPlease verify my payment!`;
+    const text = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${orderId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\nDelivery Date: 27-Sep-26 (Sunday)\n\nPlease verify my payment!`;
     return `https://wa.me/${ownerPhone}?text=${encodeURIComponent(text)}`;
   };
 
@@ -104,6 +104,10 @@ const OrderSuccess = () => {
             <div className="flex justify-between">
               <span className="text-gray-400">Product:</span>
               <span className="font-bold text-white">{order.product?.name} × {order.product?.quantity}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Scheduled Delivery:</span>
+              <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
             </div>
             <div className="flex justify-between pt-3 border-t border-[#27272A] mt-3">
               <span className="text-gray-300 font-bold">Total Amount:</span>

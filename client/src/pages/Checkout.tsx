@@ -35,8 +35,8 @@ const Checkout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  // Store ordering status
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  // Store ordering status - default to true (CLOSED) until admin opens orders
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
   const [closedMessage, setClosedMessage] = useState<string>('Orders are currently closed. Please check back later!');
   const [checkingStatus, setCheckingStatus] = useState<boolean>(false);
 
@@ -62,7 +62,7 @@ const Checkout = () => {
   useEffect(() => {
     fetchStoreStatus();
     const handleStorageChange = () => {
-      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') !== 'false');
     };
     window.addEventListener('store_status_changed', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
@@ -291,7 +291,19 @@ const Checkout = () => {
           {/* Checkout Form */}
           <div className="w-full lg:w-7/12">
             <div className="brand-card p-6 md:p-10 shadow-2xl border border-[#27272A] bg-[#121212]">
-              <h2 className="text-2xl font-bold text-[#FFB800] mb-8 pb-4 border-b border-[#27272A]">Delivery Details</h2>
+              <h2 className="text-2xl font-bold text-[#FFB800] mb-6 pb-4 border-b border-[#27272A]">Delivery Details</h2>
+              
+              {/* Delivery Date Notice */}
+              <div className="flex items-center justify-between bg-[#FFB800]/10 border border-[#FFB800]/30 rounded-xl px-4 py-3 mb-6">
+                <div className="flex items-center gap-2.5">
+                  <Clock className="w-5 h-5 text-[#FFB800]" />
+                  <div>
+                    <span className="text-xs text-gray-400 block">Scheduled Delivery</span>
+                    <span className="text-sm font-bold text-white">Sunday, 27-Sep-26 (Lunch)</span>
+                  </div>
+                </div>
+                <span className="bg-[#FFB800] text-black font-extrabold text-[11px] px-2.5 py-1 rounded-full uppercase tracking-wider">Confirmed Slot</span>
+              </div>
               
               {apiError && (
                 <div className="bg-red-950/80 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-8 text-sm flex items-start gap-3">
@@ -426,6 +438,10 @@ const Checkout = () => {
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300 font-medium">Delivery</span>
                     <span className="font-bold text-[#FFB800]">Free / Standard</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-300 font-medium">Delivery Date</span>
+                    <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
                   </div>
                 </div>
                 

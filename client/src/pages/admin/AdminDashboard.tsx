@@ -10,8 +10,8 @@ const AdminDashboard = () => {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [storageUsage, setStorageUsage] = useState<any>(null);
   
-  // Store orders open / closed state
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  // Store orders open / closed state - default to closed until turned on
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
   const [isTogglingStore, setIsTogglingStore] = useState(false);
   const [storeStatusMsg, setStoreStatusMsg] = useState('');
   

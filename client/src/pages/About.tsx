@@ -66,7 +66,7 @@ const About: React.FC = () => {
           </p>
 
           <p className="leading-relaxed text-sm sm:text-base">
-            We operate on a <strong className="text-[#f5a623] font-bold">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday. This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
+            We operate on a <strong className="text-[#f5a623] font-bold">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday (Next Delivery: 27-Sep-26). This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
           </p>
 
           <p className="leading-relaxed text-sm sm:text-base">

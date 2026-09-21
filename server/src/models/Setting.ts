@@ -18,7 +18,7 @@ const SettingSchema: Schema = new Schema(
     isOrdersClosed: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     closedMessage: {
       type: String,

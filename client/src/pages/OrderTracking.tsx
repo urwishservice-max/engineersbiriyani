@@ -327,9 +327,13 @@ const OrderTracking = () => {
               <span className="text-gray-400">Delivery To:</span>
               <span className="text-right max-w-[220px] truncate text-white">{order.customer.address}, {order.customer.city}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Date:</span>
+            <div className="flex justify-between mb-2 text-sm">
+              <span className="text-gray-400">Date Placed:</span>
               <span className="text-white">{new Date(order.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div className="flex justify-between text-sm pt-2 border-t border-[#27272A]/50">
+              <span className="text-gray-400">Scheduled Delivery:</span>
+              <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
             </div>
           </div>
         </div>

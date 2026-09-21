@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Clock } from 'lucide-react';
 
 const Home: React.FC = () => {
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -22,7 +22,7 @@ const Home: React.FC = () => {
     fetchStatus();
 
     const handleUpdate = () => {
-      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') !== 'false');
     };
     window.addEventListener('store_status_changed', handleUpdate);
     window.addEventListener('storage', handleUpdate);

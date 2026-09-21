@@ -15,7 +15,7 @@ const categories = ['All', 'Biryani', 'Sides'];
 const Menu = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -33,7 +33,7 @@ const Menu = () => {
     fetchStatus();
 
     const handleUpdate = () => {
-      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') !== 'false');
     };
     window.addEventListener('store_status_changed', handleUpdate);
     window.addEventListener('storage', handleUpdate);

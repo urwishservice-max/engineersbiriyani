@@ -5,11 +5,11 @@ import { LayoutDashboard, LogOut, Radio } from 'lucide-react';
 const AdminLayout = () => {
   const token = localStorage.getItem('adminToken');
   const navigate = useNavigate();
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
 
   useEffect(() => {
     const handleStatusUpdate = () => {
-      setIsOrdersClosed(localStorage.getItem('store_orders_closed') === 'true');
+      setIsOrdersClosed(localStorage.getItem('store_orders_closed') !== 'false');
     };
     window.addEventListener('store_status_changed', handleStatusUpdate);
     window.addEventListener('storage', handleStatusUpdate);

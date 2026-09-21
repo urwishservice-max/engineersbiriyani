@@ -265,7 +265,7 @@ export const getStoreStatus = async (req: Request, res: Response): Promise<void>
     res.status(200).json({
       success: true,
       data: {
-        isOrdersClosed: setting ? Boolean(setting.isOrdersClosed) : false,
+        isOrdersClosed: setting ? Boolean(setting.isOrdersClosed) : true,
         closedMessage: setting?.closedMessage || 'Orders are currently closed. Please check back later!',
       }
     });
