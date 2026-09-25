@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ShoppingCart, Search, Clock } from 'lucide-react';
 
 const menuItems = [
-  { id: 1, category: 'Biryani', name: 'Special Chicken Biryani (1200g)', price: '₹239', desc: 'Aromatic basmati rice cooked with 3 to 4 tender chicken pieces, authentic spices, and served with Onion Raita & Kathrika.', img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=400&auto=format&fit=crop', badge: 'Bestseller' },
+  { id: 1, category: 'Biryani', name: 'Special Chicken Biryani (1200g)', price: '₹249', desc: 'Aromatic basmati rice cooked with 3 to 4 tender chicken pieces, authentic spices, and served with Onion Raita & Kathrika.', img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=400&auto=format&fit=crop', badge: 'Bestseller' },
   { id: 2, category: 'Biryani', name: 'Chicken Biryani (600g Box)', price: '₹129', desc: 'Aromatic basmati rice cooked with 2 tender chicken pieces, accompanied with fresh Onion Raita & Kathrika.', img: 'https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=400&auto=format&fit=crop', badge: 'Popular' },
   { id: 3, category: 'Sides', name: 'Onion Raita', price: 'Included', desc: 'Cool yogurt mixed with crunchy onions and mild spices. Served fresh with every biryani.', img: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c4?w=400&q=80' },
   { id: 4, category: 'Sides', name: 'Kathrika', price: 'Included', desc: 'Traditional authentic South Indian tangy brinjal gravy (Kathrika). The perfect accompaniment.', img: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80' },

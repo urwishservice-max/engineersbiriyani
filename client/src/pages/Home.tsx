@@ -87,7 +87,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* POPULAR SPECIALS SECTION (Rates: Rs 130 & Rs 250) */}
+      {/* POPULAR SPECIALS SECTION (Rates: Rs 129 & Rs 249) */}
       <section className="py-24 px-6 sm:px-12 bg-black text-center border-t border-white/5">
         <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-[2px] uppercase mb-14">
           POPULAR SPECIALS
@@ -124,7 +124,7 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          {/* Card 2: 1200g Family Box @ Rs 239 */}
+          {/* Card 2: 1200g Family Box @ Rs 249 */}
           <div className="bg-[#111315] rounded-[24px] p-6 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex flex-col items-center hover:-translate-y-1 transition-transform">
             <div className="w-full h-[220px] rounded-[16px] overflow-hidden mb-6">
               <img 
@@ -139,7 +139,7 @@ const Home: React.FC = () => {
             <p className="text-xs text-gray-400 mb-4">3 to 4 Pieces Chicken + Onion Raita & Kathrika</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 300</span>
-              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 239</span>
+              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 249</span>
             </div>
 
             <Link 

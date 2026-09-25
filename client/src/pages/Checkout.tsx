@@ -22,7 +22,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 const OPTIONS = {
   '600g': { name: 'Chicken Biriyani (600g)', price: 129, desc: '2 pieces' },
-  '1200g': { name: 'Chicken Biriyani (1200g)', price: 239, desc: '3 to 4 pieces' }
+  '1200g': { name: 'Chicken Biriyani (1200g)', price: 249, desc: '3 to 4 pieces' }
 };
 
 const Checkout = () => {
@@ -342,7 +342,7 @@ const Checkout = () => {
                     {optionType === '1200g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">1200g Bucket</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹239</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹249</span>
                     </div>
                     <p className="text-xs text-gray-300">3-4 pieces</p>
                   </div>

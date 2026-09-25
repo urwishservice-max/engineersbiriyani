@@ -206,7 +206,7 @@ const AdminDashboard = () => {
         location: 'Admin Dashboard Test',
         productName: 'Chicken Biriyani (Test)',
         quantity: 1,
-        totalAmount: 239,
+        totalAmount: 249,
         paymentStatus: 'TEST_ROW_VERIFIED',
         screenshotUrl: 'https://res.cloudinary.com/enqntmyw/image/upload/sample.jpg',
         deliveryDate: '27-Sep-26 (Sunday)'
