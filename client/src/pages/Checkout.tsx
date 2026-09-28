@@ -4,7 +4,20 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
-import { ShieldCheck, CheckCircle2, Store, Clock, PhoneCall, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
+import { 
+  ShieldCheck, 
+  CheckCircle2, 
+  Store, 
+  Clock, 
+  PhoneCall, 
+  ArrowRight, 
+  RefreshCw, 
+  AlertCircle,
+  QrCode,
+  Banknote,
+  Info,
+  CalendarClock
+} from 'lucide-react';
 
 const LOCATIONS = [
   'CIT - Coimbatore Institute of Technology, Peelamedu',
@@ -21,8 +34,8 @@ const checkoutSchema = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 const OPTIONS = {
-  '600g': { name: 'Chicken Biriyani (600g)', price: 129, desc: '2 pieces' },
-  '1200g': { name: 'Chicken Biriyani (1200g)', price: 249, desc: '3 to 4 pieces' }
+  '600g': { name: 'Chicken Biriyani (600g)', price: 130, desc: '2 pieces' },
+  '1200g': { name: 'Chicken Biriyani (1200g)', price: 250, desc: '3 to 4 pieces' }
 };
 
 const Checkout = () => {
@@ -32,11 +45,27 @@ const Checkout = () => {
   const paramType = searchParams.get('type');
   const initialOption: '600g' | '1200g' = (paramType === '600g' || paramType === '1200g') ? paramType : '1200g';
   const [optionType, setOptionType] = useState<'600g' | '1200g'>(initialOption);
+  const [paymentMethod, setPaymentMethod] = useState<'ONLINE' | 'COD'>('ONLINE');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  // Store ordering status - default to true (CLOSED) until admin opens orders
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
+  // Conditional logic: If ₹250 pack is selected, COD must NOT be available.
+  // Switching from ₹130 to ₹250 automatically resets paymentMethod to ONLINE.
+  const handleOptionSelect = (type: '600g' | '1200g') => {
+    setOptionType(type);
+    if (type === '1200g' && paymentMethod === 'COD') {
+      setPaymentMethod('ONLINE');
+    }
+  };
+
+  useEffect(() => {
+    if (optionType === '1200g' && paymentMethod === 'COD') {
+      setPaymentMethod('ONLINE');
+    }
+  }, [optionType, paymentMethod]);
+
+  // Store ordering status - default to open unless explicitly marked closed
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
   const [closedMessage, setClosedMessage] = useState<string>('Orders are currently closed. Please check back later!');
   const [checkingStatus, setCheckingStatus] = useState<boolean>(false);
 
@@ -100,6 +129,9 @@ const Checkout = () => {
         address: data.location,
       };
 
+      const isCOD = optionType === '600g' && paymentMethod === 'COD';
+      const chosenPaymentMethod = isCOD ? 'COD' : 'ONLINE';
+
       let createdOrderId = '';
       let createdOrderData: any = null;
 
@@ -111,6 +143,7 @@ const Checkout = () => {
             customer: customerPayload,
             quantity,
             optionType,
+            paymentMethod: chosenPaymentMethod,
           }, { timeout: 12000 });
           
           if (response.data?.success && response.data?.data?.orderId) {
@@ -118,8 +151,12 @@ const Checkout = () => {
             createdOrderData = response.data.data;
             break;
           }
-        } catch (err) {
+        } catch (err: any) {
           console.warn(`Backend API order creation attempt ${4 - attempts} failed:`, err);
+          if (err.response?.status === 400) {
+            // Stop retrying if backend rejected with validation error (e.g. invalid pack/COD)
+            throw err;
+          }
           attempts--;
           if (attempts > 0) {
             await new Promise(res => setTimeout(res, 1500));
@@ -155,12 +192,13 @@ const Checkout = () => {
             pieces: optionType === '600g' ? '2 pieces' : '3 to 4 pieces',
             breadHalwa: false,
           },
+          isPreOrder: isCOD,
           payment: {
-            method: 'UPI',
+            method: isCOD ? 'COD' : 'UPI',
             amount: totalAmount,
-            status: 'PAYMENT_PENDING',
+            status: isCOD ? 'COD_PENDING' : 'PAYMENT_PENDING',
           },
-          orderStatus: 'PAYMENT_PENDING',
+          orderStatus: isCOD ? 'CONFIRMED' : 'PAYMENT_PENDING',
           createdAt: new Date().toISOString(),
         };
 
@@ -172,7 +210,12 @@ const Checkout = () => {
         localStorage.setItem('local_orders', JSON.stringify(existingOrders));
       }
 
-      navigate(`/payment/${createdOrderId}`);
+      // If Cash on Delivery Pre-Order, proceed directly to success page (no UPI screenshot needed)
+      if (isCOD) {
+        navigate(`/order-success/${createdOrderId}`);
+      } else {
+        navigate(`/payment/${createdOrderId}`);
+      }
     } catch (error: any) {
       console.error('Checkout Submit Error:', error);
       setApiError(error.response?.data?.message || 'Something went wrong. Please try again.');
@@ -324,27 +367,33 @@ const Checkout = () => {
                 <label className="block text-sm font-bold text-[#FFB800] mb-4 uppercase tracking-wider">Select Portion</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div 
-                    onClick={() => setOptionType('600g')}
+                    onClick={() => handleOptionSelect('600g')}
                     className={`border-2 p-5 rounded-xl cursor-pointer transition-all relative overflow-hidden ${optionType === '600g' ? 'border-[#FFB800] bg-[#FFB800]/10 shadow-[0_0_15px_rgba(255,107,0,0.2)]' : 'border-[#27272A] bg-[#18181B] hover:border-[#FFB800]/50'}`}
                   >
                     {optionType === '600g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">600g Box</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹129</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹130</span>
                     </div>
                     <p className="text-xs text-gray-300">2 pieces chicken</p>
+                    <div className="mt-2 text-[11px] text-amber-400 font-semibold flex items-center gap-1">
+                      <span>• COD Pre-Order Available</span>
+                    </div>
                   </div>
                   
                   <div 
-                    onClick={() => setOptionType('1200g')}
+                    onClick={() => handleOptionSelect('1200g')}
                     className={`border-2 p-5 rounded-xl cursor-pointer transition-all relative overflow-hidden ${optionType === '1200g' ? 'border-[#FFB800] bg-[#FFB800]/10 shadow-[0_0_15px_rgba(255,107,0,0.2)]' : 'border-[#27272A] bg-[#18181B] hover:border-[#FFB800]/50'}`}
                   >
                     {optionType === '1200g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">1200g Bucket</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹249</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹250</span>
                     </div>
                     <p className="text-xs text-gray-300">3-4 pieces</p>
+                    <div className="mt-2 text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                      <span>• Online Payment</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -389,16 +438,140 @@ const Checkout = () => {
                   {errors.location && <p className="text-red-400 text-xs mt-1 font-medium">{errors.location.message}</p>}
                 </div>
 
+                {/* PAYMENT METHOD SELECTION */}
+                <div className="pt-6 border-t border-[#27272A]">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-bold text-[#FFB800] uppercase tracking-wider">
+                      Select Payment Method
+                    </label>
+                    {optionType === '600g' && (
+                      <span className="text-[11px] font-bold text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/30 px-2.5 py-0.5 rounded-full">
+                        COD Available for ₹130
+                      </span>
+                    )}
+                  </div>
+
+                  {/* NOTE FOR ₹130 PACK (COD available ONLY for Pre-Orders) */}
+                  {optionType === '600g' && (
+                    <div className="bg-[#FFB800]/10 border border-[#FFB800]/30 rounded-xl p-3.5 mb-4 text-xs text-[#FFB800] flex items-start gap-2.5">
+                      <Info size={16} className="shrink-0 text-[#FFB800] mt-0.5" />
+                      <div>
+                        <span className="font-bold block text-white text-xs mb-0.5">
+                          COD is available only for ₹130 Pre-Orders.
+                        </span>
+                        <span className="text-gray-300">
+                          Cash on Delivery is reserved specifically as a <strong>Pre-Order</strong> option for scheduled Sunday delivery. This is not an immediate dispatch option.
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* NOTE FOR ₹250 PACK (COD strictly unavailable) */}
+                  {optionType === '1200g' && (
+                    <div className="bg-[#18181B] border border-white/10 rounded-xl p-3.5 mb-4 text-xs text-gray-300 flex items-center gap-2">
+                      <Info size={15} className="shrink-0 text-[#FFB800]" />
+                      <span>Online Payment via UPI is the applicable payment method for the ₹250 pack.</span>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    {/* Option 1: Online Payment (Always available for ₹130 and ₹250) */}
+                    <div
+                      onClick={() => setPaymentMethod('ONLINE')}
+                      className={`border-2 p-4 rounded-xl cursor-pointer transition-all relative overflow-hidden flex flex-col justify-between ${
+                        paymentMethod === 'ONLINE'
+                          ? 'border-[#FFB800] bg-[#FFB800]/10 shadow-[0_0_15px_rgba(255,107,0,0.15)]'
+                          : 'border-[#27272A] bg-[#18181B] hover:border-[#FFB800]/50'
+                      }`}
+                    >
+                      {paymentMethod === 'ONLINE' && (
+                        <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="flex items-center gap-2.5 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-[#27272A] flex items-center justify-center text-[#FFB800]">
+                            <QrCode size={18} />
+                          </div>
+                          <div>
+                            <span className="font-bold text-white text-sm block">Online Payment</span>
+                            <span className="text-[11px] text-emerald-400 font-semibold">Instant UPI / QR</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Scan QR via Google Pay, PhonePe, Paytm or BHIM UPI & upload screenshot.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Option 2: Cash on Delivery – Pre-Order Only (AVAILABLE ONLY FOR ₹130 PACK, COMPLETELY REMOVED/HIDDEN FOR ₹250 PACK) */}
+                    {optionType === '600g' && (
+                      <div
+                        onClick={() => setPaymentMethod('COD')}
+                        className={`border-2 p-4 rounded-xl cursor-pointer transition-all relative overflow-hidden flex flex-col justify-between ${
+                          paymentMethod === 'COD'
+                            ? 'border-[#FFB800] bg-[#FFB800]/10 shadow-[0_0_15px_rgba(255,107,0,0.15)]'
+                            : 'border-[#27272A] bg-[#18181B] hover:border-[#FFB800]/50'
+                        }`}
+                      >
+                        <div className="absolute top-0 right-0 flex items-center">
+                          <span className="bg-[#FFB800] text-black font-extrabold text-[10px] px-2 py-0.5 rounded-bl-md uppercase tracking-wider">
+                            Pre-Order Only
+                          </span>
+                          {paymentMethod === 'COD' && (
+                            <div className="bg-[#FFB800] text-black font-extrabold p-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2.5 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-[#27272A] flex items-center justify-center text-[#FFB800]">
+                              <Banknote size={18} />
+                            </div>
+                            <div>
+                              <span className="font-bold text-white text-sm block">Cash on Delivery</span>
+                              <span className="text-[11px] text-[#FFB800] font-bold uppercase tracking-wider">
+                                Pre-Order Only
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-300 mt-1">
+                            Pay in cash upon delivery. <strong>Pre-Order only</strong> for scheduled Sunday batch.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* COD Selected Pre-Order Clarification Banner */}
+                  {optionType === '600g' && paymentMethod === 'COD' && (
+                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mb-2 text-xs text-amber-200 flex items-center gap-2.5">
+                      <CalendarClock size={16} className="text-[#FFB800] shrink-0" />
+                      <span>
+                        <strong>Pre-Order Confirmed with COD:</strong> No advance payment needed. Please pay <strong>₹{totalAmount}</strong> in cash upon Sunday delivery.
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="pt-6 border-t border-[#27272A]">
                   <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="w-full btn-primary flex justify-center items-center h-14 text-base"
+                    className="w-full btn-primary flex justify-center items-center h-14 text-base font-bold shadow-lg transition-transform hover:-translate-y-0.5"
                   >
-                    {isSubmitting ? 'Processing Order...' : 'Proceed to Payment'}
+                    {isSubmitting ? (
+                      'Processing Order...'
+                    ) : paymentMethod === 'COD' ? (
+                      `Place Pre-Order (Cash on Delivery) — ₹${totalAmount}`
+                    ) : (
+                      `Proceed to Online Payment — ₹${totalAmount}`
+                    )}
                   </button>
                   <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                    <ShieldCheck className="w-4 h-4 text-[#FFB800]" /> 100% Secure & Encrypted Payment
+                    <ShieldCheck className="w-4 h-4 text-[#FFB800]" /> 100% Secure & Encrypted Order System
                   </p>
                 </div>
               </form>
@@ -451,12 +624,36 @@ const Checkout = () => {
                     <span className="text-gray-300 font-medium">Delivery Date</span>
                     <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
                   </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-300 font-medium">Payment Method</span>
+                    <span className="font-bold text-white text-right">
+                      {paymentMethod === 'COD' ? (
+                        <span className="text-[#FFB800] flex items-center gap-1 justify-end font-extrabold text-xs">
+                          <Banknote size={14} /> Cash on Delivery (Pre-Order)
+                        </span>
+                      ) : (
+                        <span className="text-emerald-400 flex items-center gap-1 justify-end font-semibold text-xs">
+                          <QrCode size={14} /> Online Payment (UPI)
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  {paymentMethod === 'COD' && (
+                    <div className="flex justify-between items-center text-xs pt-1 border-t border-white/5">
+                      <span className="text-gray-400">Order Classification</span>
+                      <span className="px-2 py-0.5 rounded-full bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40 font-bold uppercase tracking-wider text-[10px]">
+                        Pre-Order Only
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="pt-6 border-t border-[#27272A] flex justify-between items-end">
                   <div>
                     <span className="block font-bold text-[#FFB800] text-sm mb-1">Total Payable</span>
-                    <span className="block text-xs text-gray-400">Inclusive of all taxes</span>
+                    <span className="block text-xs text-gray-400">
+                      {paymentMethod === 'COD' ? 'Payable in Cash upon delivery' : 'Inclusive of all taxes'}
+                    </span>
                   </div>
                   <span className="font-bold text-4xl text-[#FFB800]">₹{totalAmount}</span>
                 </div>

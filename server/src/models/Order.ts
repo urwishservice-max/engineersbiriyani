@@ -23,13 +23,14 @@ export interface IOrder extends Document {
   payment: {
     method: string;
     amount: number;
-    status: 'PAYMENT_PENDING' | 'SCREENSHOT_UPLOADED' | 'PAYMENT_VERIFIED' | 'PAYMENT_REJECTED';
+    status: 'PAYMENT_PENDING' | 'SCREENSHOT_UPLOADED' | 'PAYMENT_VERIFIED' | 'PAYMENT_REJECTED' | 'COD_PENDING';
     screenshotUrl?: string;
     screenshotPublicId?: string;
     uploadedAt?: Date;
     verifiedAt?: Date;
     verifiedBy?: string;
   };
+  isPreOrder?: boolean;
   orderStatus: 'PAYMENT_PENDING' | 'PAYMENT_VERIFICATION' | 'CONFIRMED' | 'PREPARING' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
   feedback?: {
     rating: number;
@@ -62,12 +63,13 @@ const OrderSchema: Schema = new Schema({
     pieces: { type: String, required: true },
     breadHalwa: { type: Boolean, default: false }
   },
+  isPreOrder: { type: Boolean, default: false },
   payment: {
     method: { type: String, required: true, default: 'UPI' },
     amount: { type: Number, required: true },
     status: {
       type: String,
-      enum: ['PAYMENT_PENDING', 'SCREENSHOT_UPLOADED', 'PAYMENT_VERIFIED', 'PAYMENT_REJECTED'],
+      enum: ['PAYMENT_PENDING', 'SCREENSHOT_UPLOADED', 'PAYMENT_VERIFIED', 'PAYMENT_REJECTED', 'COD_PENDING'],
       default: 'PAYMENT_PENDING',
       index: true
     },

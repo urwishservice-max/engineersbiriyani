@@ -148,7 +148,12 @@ const OrderTracking = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, paymentMethod?: string, isPreOrder?: boolean) => {
+    if (paymentMethod === 'COD' || isPreOrder) {
+      if (status === 'CONFIRMED' || status === 'PAYMENT_PENDING') {
+        return <span className="bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40 text-xs px-3 py-1 rounded-full font-bold">COD Pre-Order Confirmed</span>;
+      }
+    }
     switch (status) {
       case 'PAYMENT_PENDING':
         return <span className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 text-xs px-3 py-1 rounded-full font-bold">Payment Pending</span>;
@@ -187,7 +192,8 @@ const OrderTracking = () => {
     );
 
     const currentStatusIndex = statuses.findIndex(s => s.key === order.orderStatus);
-    const isPaymentPending = order.orderStatus === 'PAYMENT_PENDING' || order.payment.status === 'PAYMENT_REJECTED';
+    const isCOD = order.payment?.method === 'COD' || order.isPreOrder;
+    const isPaymentPending = !isCOD && (order.orderStatus === 'PAYMENT_PENDING' || order.payment?.status === 'PAYMENT_REJECTED');
 
     return (
       <div className="flex-1 flex flex-col items-center pt-28 pb-16 px-4 bg-black text-white min-h-screen">
@@ -209,10 +215,16 @@ const OrderTracking = () => {
               <div>
                 <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Order ID</p>
                 <p className="font-mono font-bold text-lg text-white">{order.orderId}</p>
+                {isCOD && (
+                  <span className="inline-block mt-1 text-[11px] font-bold text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/30 px-2 py-0.5 rounded">
+                    Cash on Delivery – Pre-Order Only
+                  </span>
+                )}
               </div>
               <div className="text-right">
                 <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Total</p>
-                <p className="font-bold text-xl text-[#FFB800]">₹{order.payment.amount}</p>
+                <p className="font-bold text-xl text-[#FFB800]">₹{order.payment?.amount}</p>
+                {isCOD && <p className="text-[11px] text-gray-400">Pay in cash on delivery</p>}
               </div>
             </div>
             
@@ -425,7 +437,12 @@ const OrderTracking = () => {
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-3 flex-wrap">
                         <span className="font-mono font-bold text-white text-base">{ord.orderId}</span>
-                        {getStatusBadge(ord.orderStatus)}
+                        {getStatusBadge(ord.orderStatus, ord.payment?.method, ord.isPreOrder)}
+                        {(ord.payment?.method === 'COD' || ord.isPreOrder) && (
+                          <span className="text-[10px] bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                            COD Pre-Order
+                          </span>
+                        )}
                       </div>
                       <p className="font-bold text-[#FFB800] text-lg">{ord.product.name} × {ord.product.quantity}</p>
                       <p className="text-xs text-gray-400">
@@ -435,8 +452,8 @@ const OrderTracking = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row md:flex-col items-end justify-between gap-3 pt-4 md:pt-0 border-t md:border-t-0 border-[#27272A]">
-                      <span className="font-bold text-2xl text-[#FFB800]">₹{ord.payment.amount}</span>
-                      {ord.orderStatus === 'PAYMENT_PENDING' ? (
+                      <span className="font-bold text-2xl text-[#FFB800]">₹{ord.payment?.amount || ord.product?.totalAmount}</span>
+                      {ord.orderStatus === 'PAYMENT_PENDING' && ord.payment?.method !== 'COD' && !ord.isPreOrder ? (
                         <Link 
                           to={`/payment/${ord.orderId}`}
                           className="btn-primary py-2.5 px-5 text-xs w-full sm:w-auto text-center"

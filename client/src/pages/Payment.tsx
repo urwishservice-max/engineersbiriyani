@@ -7,6 +7,7 @@ import { sendOrderToGoogleSheet } from '../services/googleSheet.service';
 
 interface OrderDetails {
   orderId: string;
+  isPreOrder?: boolean;
   customer?: {
     name?: string;
     phone?: string;
@@ -18,6 +19,7 @@ interface OrderDetails {
     weight?: string;
   };
   payment: {
+    method?: string;
     amount: number;
     status: string;
     screenshotUrl?: string;
@@ -33,7 +35,7 @@ const Payment = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
-  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
+  const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') === 'true');
   
   const upiId = import.meta.env.VITE_UPI_ID || 'amjathali003-1@okicici';
 
@@ -57,10 +59,13 @@ const Payment = () => {
       try {
         const response = await axios.get(`${apiBase}/api/orders/${orderId}`);
         if (response.data?.success) {
-          setOrder(response.data.data);
+          const ord = response.data.data;
+          setOrder(ord);
           
-          if (response.data.data.payment.status !== 'PAYMENT_PENDING') {
+          // COD Pre-orders do not require UPI screenshot upload; redirect straight to order-success
+          if (ord.payment?.method === 'COD' || ord.isPreOrder || ord.payment?.status !== 'PAYMENT_PENDING') {
             navigate(`/order-success/${orderId}`);
+            return;
           }
           setLoading(false);
           return;
@@ -75,8 +80,9 @@ const Payment = () => {
         try {
           const parsed = JSON.parse(saved);
           setOrder(parsed);
-          if (parsed.payment?.status !== 'PAYMENT_PENDING') {
+          if (parsed.payment?.method === 'COD' || parsed.isPreOrder || parsed.payment?.status !== 'PAYMENT_PENDING') {
             navigate(`/order-success/${orderId}`);
+            return;
           }
         } catch (e) {
           setError('Failed to fetch order details. Invalid Order ID.');

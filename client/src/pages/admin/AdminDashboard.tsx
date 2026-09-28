@@ -411,7 +411,12 @@ const AdminDashboard = () => {
     return label;
   };
 
-  const getStatusBadge = (status: string, paymentStatus: string) => {
+  const getStatusBadge = (status: string, paymentStatus: string, order?: any) => {
+    if (order?.payment?.method === 'COD' || order?.isPreOrder) {
+      if (status === 'CONFIRMED' || status === 'PAYMENT_PENDING') {
+        return <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-xs font-bold">💵 COD (Pre-Order)</span>;
+      }
+    }
     if (paymentStatus === 'SCREENSHOT_UPLOADED') return <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><Camera size={13}/> Screenshot Uploaded (Verify)</span>;
     if (status === 'CONFIRMED') return <span className="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Confirmed</span>;
     if (status === 'DELIVERED') return <span className="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Delivered</span>;
@@ -421,6 +426,13 @@ const AdminDashboard = () => {
   };
 
   const getScreenshotIndicator = (order: any) => {
+    if (order.payment?.method === 'COD' || order.isPreOrder) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-md text-xs font-bold">
+          💵 Cash on Delivery
+        </span>
+      );
+    }
     if (order.payment?.status === 'SCREENSHOT_UPLOADED' || order.payment?.screenshotUrl) {
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-md text-xs font-bold">
@@ -1147,7 +1159,7 @@ const AdminDashboard = () => {
                         {getScreenshotIndicator(order)}
                       </td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(order.orderStatus, order.payment?.status)}
+                        {getStatusBadge(order.orderStatus, order.payment?.status, order)}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700 font-medium">
                         <div className="font-bold text-gray-900">{formattedDate}</div>

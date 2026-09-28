@@ -313,11 +313,31 @@ const AdminOrderDetails = () => {
             <h2 className="text-lg font-semibold mb-4 border-b border-gray-100 pb-2">Payment Details</h2>
             
             <div className="mb-4">
+              <p className="text-sm text-gray-500 mb-1">Payment Method</p>
+              <span className={`px-2.5 py-1 rounded-md text-sm font-bold inline-block ${
+                order.payment?.method === 'COD' || order.isPreOrder 
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300' 
+                  : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+              }`}>
+                {order.payment?.method === 'COD' || order.isPreOrder ? '💵 Cash on Delivery (Pre-Order Only)' : '💳 UPI / Online Payment'}
+              </span>
+            </div>
+
+            <div className="mb-4">
               <p className="text-sm text-gray-500 mb-1">Status</p>
               <span className="px-2 py-1 bg-gray-100 rounded-md text-sm font-medium">{order.payment.status}</span>
             </div>
             
-            {order.payment.screenshotUrl ? (
+            {order.payment?.method === 'COD' || order.isPreOrder ? (
+              <div className="p-4 bg-amber-50 text-amber-900 text-sm rounded-md mb-6 border border-amber-300">
+                <p className="font-bold flex items-center gap-1.5">
+                  <span>💵</span> Cash on Delivery Pre-Order
+                </p>
+                <p className="text-xs text-amber-800 mt-1.5 leading-relaxed">
+                  Collect <strong>₹{order.payment?.amount || order.product?.totalAmount}</strong> in cash from the customer upon Sunday delivery. No advance online payment required.
+                </p>
+              </div>
+            ) : order.payment.screenshotUrl ? (
               <div className="mb-6">
                 <p className="text-sm text-gray-500 mb-2">Screenshot</p>
                 <a href={order.payment.screenshotUrl} target="_blank" rel="noreferrer" className="block border border-gray-200 rounded-md overflow-hidden hover:opacity-90 transition">

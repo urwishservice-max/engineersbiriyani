@@ -59,6 +59,8 @@ const OrderSuccess = () => {
     if (orderId) fetchOrder();
   }, [orderId, searchParams]);
 
+  const isCOD = order?.payment?.method === 'COD' || order?.isPreOrder;
+
   const getWhatsAppUrl = () => {
     if (!order) return '#';
     const ownerPhone = '919360867908';
@@ -67,6 +69,11 @@ const OrderSuccess = () => {
     const pName = order.product?.name || 'Biriyani';
     const qty = order.product?.quantity || 1;
     const amount = order.payment?.amount || 0;
+
+    if (isCOD) {
+      const text = `Hello Engineer's Biriyani, I have placed a Cash on Delivery Pre-Order for Order ID: ${orderId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nPayment Method: Cash on Delivery – Pre-Order Only\nTotal Amount: ₹${amount} (Pay on delivery)\nDelivery Date: 27-Sep-26 (Sunday)\n\nPlease confirm my pre-order!`;
+      return `https://wa.me/${ownerPhone}?text=${encodeURIComponent(text)}`;
+    }
 
     const text = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${orderId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\nDelivery Date: 27-Sep-26 (Sunday)\n\nPlease verify my payment!`;
     return `https://wa.me/${ownerPhone}?text=${encodeURIComponent(text)}`;
@@ -79,10 +86,14 @@ const OrderSuccess = () => {
           <CheckCircle className="text-[#FFB800] w-20 h-20 animate-bounce" />
         </div>
         
-        <h1 className="text-3xl font-bold mb-4 text-[#FFB800]">Payment Screenshot Submitted</h1>
+        <h1 className="text-3xl font-bold mb-4 text-[#FFB800]">
+          {isCOD ? 'Pre-Order Placed Successfully!' : 'Payment Screenshot Submitted'}
+        </h1>
         
         <p className="text-white mb-8 text-sm leading-relaxed">
-          Your order has been received and is waiting for payment verification.
+          {isCOD 
+            ? 'Thank you! Your Cash on Delivery pre-order has been recorded for the upcoming delivery batch.'
+            : 'Your order has been received and is waiting for payment verification.'}
         </p>
         
         {order && (
@@ -106,18 +117,36 @@ const OrderSuccess = () => {
               <span className="font-bold text-white">{order.product?.name} × {order.product?.quantity}</span>
             </div>
             <div className="flex justify-between">
+              <span className="text-gray-400">Payment Method:</span>
+              <span className={`font-bold ${isCOD ? 'text-[#FFB800]' : 'text-emerald-400'}`}>
+                {isCOD ? 'Cash on Delivery – Pre-Order Only' : 'Online Payment (UPI)'}
+              </span>
+            </div>
+            {isCOD && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Order Type:</span>
+                <span className="bg-[#FFB800]/20 border border-[#FFB800]/40 text-[#FFB800] px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">
+                  Pre-Order Only
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between">
               <span className="text-gray-400">Scheduled Delivery:</span>
               <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
             </div>
             <div className="flex justify-between pt-3 border-t border-[#27272A] mt-3">
               <span className="text-gray-300 font-bold">Total Amount:</span>
-              <span className="font-bold text-xl text-[#FFB800]">₹{order.payment?.amount}</span>
+              <span className="font-bold text-xl text-[#FFB800]">
+                ₹{order.payment?.amount} {isCOD && <span className="text-xs text-gray-400 font-normal">(Pay on Delivery)</span>}
+              </span>
             </div>
           </div>
         )}
         
         <div className="bg-[#FFB800]/10 border border-[#FFB800]/30 text-[#FFB800] p-4 rounded-xl text-sm mb-8 font-medium">
-          We will confirm your order after verifying your payment screenshot on WhatsApp.
+          {isCOD 
+            ? 'Cash on Delivery – Pre-Order Only: Your order will be freshly cooked and delivered on Sunday. Please keep the exact cash amount ready upon delivery.'
+            : 'We will confirm your order after verifying your payment screenshot on WhatsApp.'}
         </div>
         
         <div className="space-y-4">
@@ -129,7 +158,7 @@ const OrderSuccess = () => {
               className="w-full py-4 text-center text-sm bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-lg"
             >
               <MessageCircle size={20} />
-              <span>Send Confirmation on WhatsApp</span>
+              <span>{isCOD ? 'Confirm Pre-Order on WhatsApp' : 'Send Confirmation on WhatsApp'}</span>
             </a>
           )}
 

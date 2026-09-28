@@ -6,7 +6,7 @@ import crypto from 'crypto';
 
 dotenv.config();
 
-const BIRIYANI_PRICE = parseInt(process.env.BIRIYANI_PRICE || '249', 10);
+const BIRIYANI_PRICE = parseInt(process.env.BIRIYANI_PRICE || '250', 10);
 const DELIVERY_CHARGE = parseInt(process.env.DELIVERY_CHARGE || '0', 10);
 
 const generateOrderId = (): string => {
@@ -27,7 +27,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const { customer, quantity, optionType = '1200g' } = req.body;
+    const { customer, quantity, optionType = '1200g', paymentMethod = 'ONLINE' } = req.body;
 
     const customerName = customer?.name || 'Customer';
     const customerPhone = customer?.phone || '';
@@ -42,14 +42,25 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    let unitPrice = BIRIYANI_PRICE; // 249
+    const isCOD = paymentMethod === 'COD';
+
+    // Strict Backend Validation: COD is available ONLY for ₹130 pack (600g) pre-orders!
+    if (isCOD && optionType !== '600g') {
+      res.status(400).json({
+        success: false,
+        message: 'Cash on Delivery is available only for ₹130 pack pre-orders. COD is not available for the ₹250 pack.'
+      });
+      return;
+    }
+
+    let unitPrice = BIRIYANI_PRICE; // 250
     let weight = '1200g';
     let pieces = '3 to 4 piece';
     let breadHalwa = false;
     let productName = 'Chicken Biriyani (1200g)';
 
     if (optionType === '600g') {
-      unitPrice = 129;
+      unitPrice = 130;
       weight = '600g';
       pieces = '2 piece';
       breadHalwa = false;
@@ -80,12 +91,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         pieces,
         breadHalwa,
       },
+      isPreOrder: isCOD,
       payment: {
-        method: 'UPI',
+        method: isCOD ? 'COD' : 'UPI',
         amount: totalAmount,
-        status: 'PAYMENT_PENDING'
+        status: isCOD ? 'COD_PENDING' : 'PAYMENT_PENDING'
       },
-      orderStatus: 'PAYMENT_PENDING'
+      orderStatus: isCOD ? 'CONFIRMED' : 'PAYMENT_PENDING'
     });
 
     await newOrder.save();
