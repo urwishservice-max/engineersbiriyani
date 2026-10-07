@@ -223,7 +223,7 @@ const AdminDashboard = () => {
         totalAmount: 249,
         paymentStatus: 'TEST_ROW_VERIFIED',
         screenshotUrl: 'https://res.cloudinary.com/enqntmyw/image/upload/sample.jpg',
-        deliveryDate: '27-Sep-26 (Sunday)'
+        deliveryDate: '11-Oct-2026 (Sunday)'
       });
       setWebhookSavedMsg('✓ Test order sent to Google Sheet! Check your spreadsheet.');
       setTimeout(() => setWebhookSavedMsg(''), 5000);

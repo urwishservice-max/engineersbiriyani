@@ -28,7 +28,7 @@ ${order.customer.city} - ${order.customer.pincode}
 
 ${order.product.name} × ${order.product.quantity}
 Total: ₹${order.payment.amount}
-Delivery Date: ${process.env.DELIVERY_DATE || '27-Sep-26 (Sunday)'}
+Delivery Date: ${process.env.DELIVERY_DATE || '11-Oct-2026 (Sunday)'}
 Payment Status: Screenshot Uploaded
 
 Please verify payment in the admin dashboard.
@@ -74,7 +74,7 @@ export const sendPaymentConfirmedNotification = async (order: IOrder): Promise<b
     // Ensure phone has country code (assume 91 for India if exactly 10 digits)
     const formattedPhone = customerPhone.length === 10 ? `91${customerPhone}` : customerPhone;
 
-    const deliveryDate = process.env.DELIVERY_DATE || '27-Sep-26 (Sunday)';
+    const deliveryDate = process.env.DELIVERY_DATE || '11-Oct-2026 (Sunday)';
     const messageText = `
 Hi ${order.customer.name},
 

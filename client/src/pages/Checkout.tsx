@@ -34,8 +34,8 @@ const checkoutSchema = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 const OPTIONS = {
-  '600g': { name: 'Chicken Biriyani (600g)', price: 130, desc: '2 pieces' },
-  '1200g': { name: 'Chicken Biriyani (1200g)', price: 250, desc: '3 to 4 pieces' }
+  '600g': { name: 'Chicken Biriyani (600g)', price: 129, desc: '2 pieces' },
+  '1200g': { name: 'Chicken Biriyani (1200g)', price: 249, desc: '3 to 4 pieces' }
 };
 
 const Checkout = () => {
@@ -49,8 +49,8 @@ const Checkout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  // Conditional logic: If ₹250 pack is selected, COD must NOT be available.
-  // Switching from ₹130 to ₹250 automatically resets paymentMethod to ONLINE.
+  // Conditional logic: If ₹249 pack is selected, COD must NOT be available.
+  // Switching from ₹129 to ₹249 automatically resets paymentMethod to ONLINE.
   const handleOptionSelect = (type: '600g' | '1200g') => {
     setOptionType(type);
     if (type === '1200g' && paymentMethod === 'COD') {
@@ -260,7 +260,7 @@ const Checkout = () => {
               </h2>
 
               <div className="inline-block px-4 py-1.5 rounded-full bg-[#FFB800]/10 border border-[#FFB800]/30 text-[#FFB800] text-xs font-bold mb-4">
-                Next Delivery Batch: Sunday, 27-Sep-26
+                Next Delivery Batch: Sunday, 11-Oct-2026
               </div>
 
               <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-lg mx-auto">
@@ -323,7 +323,7 @@ const Checkout = () => {
           <span className="eyebrow mx-auto justify-center flex mb-2">— ALMOST THERE —</span>
           <div className="inline-flex items-center gap-2 bg-[#FFB800]/20 border border-[#FFB800]/50 text-[#FFB800] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 mx-auto">
             <Clock className="w-3.5 h-3.5 animate-pulse" />
-            <span>Delivery Date: Sunday, 27-Sep-26 (Lunch)</span>
+            <span>Delivery Date: Sunday, 11-Oct-2026 (Lunch)</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-[#FFB800] mb-3 leading-tight">
             Secure Checkout
@@ -350,7 +350,7 @@ const Checkout = () => {
                   <Clock className="w-5 h-5 text-[#FFB800]" />
                   <div>
                     <span className="text-xs text-gray-400 block">Scheduled Delivery</span>
-                    <span className="text-sm font-bold text-white">Sunday, 27-Sep-26 (Lunch)</span>
+                    <span className="text-sm font-bold text-white">Sunday, 11-Oct-2026 (Lunch)</span>
                   </div>
                 </div>
                 <span className="bg-[#FFB800] text-black font-extrabold text-[11px] px-2.5 py-1 rounded-full uppercase tracking-wider">Confirmed Slot</span>
@@ -373,7 +373,7 @@ const Checkout = () => {
                     {optionType === '600g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">600g Box</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹130</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹129</span>
                     </div>
                     <p className="text-xs text-gray-300">2 pieces chicken</p>
                     <div className="mt-2 text-[11px] text-amber-400 font-semibold flex items-center gap-1">
@@ -388,7 +388,7 @@ const Checkout = () => {
                     {optionType === '1200g' && <div className="absolute top-0 right-0 bg-[#FFB800] text-black font-extrabold rounded-bl-lg p-1.5"><CheckCircle2 className="w-4 h-4"/></div>}
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-white">1200g Bucket</span>
-                      <span className="font-bold text-xl text-[#FFB800]">₹250</span>
+                      <span className="font-bold text-xl text-[#FFB800]">₹249</span>
                     </div>
                     <p className="text-xs text-gray-300">3-4 pieces</p>
                     <div className="mt-2 text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
@@ -446,18 +446,18 @@ const Checkout = () => {
                     </label>
                     {optionType === '600g' && (
                       <span className="text-[11px] font-bold text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/30 px-2.5 py-0.5 rounded-full">
-                        COD Available for ₹130
+                        COD Available for ₹129
                       </span>
                     )}
                   </div>
 
-                  {/* NOTE FOR ₹130 PACK (COD available ONLY for Pre-Orders) */}
+                  {/* NOTE FOR ₹129 PACK (COD available ONLY for Pre-Orders) */}
                   {optionType === '600g' && (
                     <div className="bg-[#FFB800]/10 border border-[#FFB800]/30 rounded-xl p-3.5 mb-4 text-xs text-[#FFB800] flex items-start gap-2.5">
                       <Info size={16} className="shrink-0 text-[#FFB800] mt-0.5" />
                       <div>
                         <span className="font-bold block text-white text-xs mb-0.5">
-                          COD is available only for ₹130 Pre-Orders.
+                          COD is available only for ₹129 Pre-Orders.
                         </span>
                         <span className="text-gray-300">
                           Cash on Delivery is reserved specifically as a <strong>Pre-Order</strong> option for scheduled Sunday delivery. This is not an immediate dispatch option.
@@ -466,16 +466,16 @@ const Checkout = () => {
                     </div>
                   )}
 
-                  {/* NOTE FOR ₹250 PACK (COD strictly unavailable) */}
+                  {/* NOTE FOR ₹249 PACK (COD strictly unavailable) */}
                   {optionType === '1200g' && (
                     <div className="bg-[#18181B] border border-white/10 rounded-xl p-3.5 mb-4 text-xs text-gray-300 flex items-center gap-2">
                       <Info size={15} className="shrink-0 text-[#FFB800]" />
-                      <span>Online Payment via UPI is the applicable payment method for the ₹250 pack.</span>
+                      <span>Online Payment via UPI is the applicable payment method for the ₹249 pack.</span>
                     </div>
                   )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    {/* Option 1: Online Payment (Always available for ₹130 and ₹250) */}
+                    {/* Option 1: Online Payment (Always available for ₹129 and ₹249) */}
                     <div
                       onClick={() => setPaymentMethod('ONLINE')}
                       className={`border-2 p-4 rounded-xl cursor-pointer transition-all relative overflow-hidden flex flex-col justify-between ${
@@ -505,7 +505,7 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* Option 2: Cash on Delivery – Pre-Order Only (AVAILABLE ONLY FOR ₹130 PACK, COMPLETELY REMOVED/HIDDEN FOR ₹250 PACK) */}
+                    {/* Option 2: Cash on Delivery – Pre-Order Only (AVAILABLE ONLY FOR ₹129 PACK, COMPLETELY REMOVED/HIDDEN FOR ₹249 PACK) */}
                     {optionType === '600g' && (
                       <div
                         onClick={() => setPaymentMethod('COD')}
@@ -622,7 +622,7 @@ const Checkout = () => {
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300 font-medium">Delivery Date</span>
-                    <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
+                    <span className="font-bold text-[#FFB800]">11-Oct-2026 (Sunday)</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300 font-medium">Payment Method</span>

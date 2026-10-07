@@ -345,7 +345,7 @@ const OrderTracking = () => {
             </div>
             <div className="flex justify-between text-sm pt-2 border-t border-[#27272A]/50">
               <span className="text-gray-400">Scheduled Delivery:</span>
-              <span className="font-bold text-[#FFB800]">27-Sep-26 (Sunday)</span>
+              <span className="font-bold text-[#FFB800]">11-Oct-2026 (Sunday)</span>
             </div>
           </div>
         </div>

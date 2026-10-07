@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Clock } from 'lucide-react';
+import { Clock, ChefHat } from 'lucide-react';
 
 const Home: React.FC = () => {
   const [isOrdersClosed, setIsOrdersClosed] = useState<boolean>(() => localStorage.getItem('store_orders_closed') !== 'false');
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
       {isOrdersClosed && (
         <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-900/90 via-rose-900/90 to-red-900/90 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-semibold border-b border-red-500/30 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
           <Clock size={16} className="text-red-300 animate-pulse" />
-          <span>Notice: Online bookings are currently closed. Next Delivery Date: 27-Sep-26 (Sunday)</span>
+          <span>Notice: Online bookings are currently closed. Next Delivery Date: 11-Oct-2026 (Sunday)</span>
         </div>
       )}
 
@@ -47,11 +47,17 @@ const Home: React.FC = () => {
         <div className="max-w-[1250px] w-full grid grid-cols-1 md:grid-cols-2 items-center gap-12 mx-auto">
           {/* Left Text Area */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <div className="inline-flex items-center gap-2 bg-[#f5a623]/15 border border-[#f5a623]/40 text-[#f5a623] px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-              <Clock size={13} className="animate-pulse" />
-              <span>Next Delivery: 27-Sep-26 (Sunday)</span>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-4">
+              <div className="inline-flex items-center gap-2 bg-[#f5a623]/15 border border-[#f5a623]/40 text-[#f5a623] px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                <Clock size={13} className="animate-pulse" />
+                <span>Next Delivery: 11-Oct-2026 (Sunday)</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold">
+                <ChefHat size={13} />
+                <span>Pre-Order Only</span>
+              </div>
             </div>
-            <span className="text-[#f5a623] text-sm font-extrabold tracking-[3px] uppercase mb-6">
+            <span className="text-[#f5a623] text-sm font-extrabold tracking-[3px] uppercase mb-4">
               ENGINEERED FLAVORS
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-white uppercase leading-none tracking-wide">
@@ -60,9 +66,25 @@ const Home: React.FC = () => {
             <h1 className="font-sans text-5xl sm:text-7xl lg:text-8xl font-black text-[#f5a623] uppercase leading-none tracking-wide mb-6">
               TRADITION
             </h1>
-            <p className="text-gray-400 text-base sm:text-lg max-w-md mb-8 leading-relaxed">
+            <p className="text-gray-400 text-base sm:text-lg max-w-md mb-6 leading-relaxed">
               Every spice precisely measured for the ultimate taste profile.
             </p>
+
+            {/* PRE-ORDER MANDATORY NOTICE CARD */}
+            <div className="w-full max-w-md mb-8 p-4 rounded-2xl bg-[#111315]/90 border border-[#f5a623]/35 shadow-[0_4px_25px_rgba(245,166,35,0.08)] flex items-start gap-3.5 text-left">
+              <div className="w-9 h-9 rounded-xl bg-[#f5a623]/15 border border-[#f5a623]/30 flex items-center justify-center shrink-0 text-[#f5a623] mt-0.5">
+                <ChefHat size={18} />
+              </div>
+              <div>
+                <p className="text-[#f5a623] text-xs font-extrabold tracking-wider uppercase mb-1">
+                  Pre-Order Mandatory • Fresh Batch Cooking
+                </p>
+                <p className="text-gray-300 text-xs leading-relaxed">
+                  Pre-order is mandatory! Based on your orders, we cook fresh in exact quantities on Sunday to deliver hot, authentic biryani with zero waste.
+                </p>
+              </div>
+            </div>
+
             <Link 
               to="/checkout" 
               className={`${
@@ -87,14 +109,17 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* POPULAR SPECIALS SECTION (Rates: Rs 130 & Rs 250) */}
+      {/* POPULAR SPECIALS SECTION (Rates: Rs 129 & Rs 249) */}
       <section className="py-24 px-6 sm:px-12 bg-black text-center border-t border-white/5">
-        <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-[2px] uppercase mb-14">
+        <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-[2px] uppercase mb-3">
           POPULAR SPECIALS
         </h2>
+        <div className="inline-flex items-center gap-2 bg-[#f5a623]/10 border border-[#f5a623]/30 text-[#f5a623] px-4 py-1.5 rounded-full text-xs font-semibold mb-12">
+          <span>📢 Pre-order must: We cook fresh exclusively based on your order for 11-Oct-2026 (Sunday)</span>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[900px] mx-auto">
-          {/* Card 1: 600g Box @ Rs 130 */}
+          {/* Card 1: 600g Box @ Rs 129 */}
           <div className="bg-[#111315] rounded-[24px] p-6 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex flex-col items-center hover:-translate-y-1 transition-transform">
             <div className="w-full h-[220px] rounded-[16px] overflow-hidden mb-6">
               <img 
@@ -109,7 +134,7 @@ const Home: React.FC = () => {
             <p className="text-xs text-gray-400 mb-4">2 Pieces Chicken + Onion Raita & Kathrika</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 160</span>
-              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 130</span>
+              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 129</span>
             </div>
 
             <Link 
@@ -124,7 +149,7 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          {/* Card 2: 1200g Family Box @ Rs 250 */}
+          {/* Card 2: 1200g Family Box @ Rs 249 */}
           <div className="bg-[#111315] rounded-[24px] p-6 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex flex-col items-center hover:-translate-y-1 transition-transform">
             <div className="w-full h-[220px] rounded-[16px] overflow-hidden mb-6">
               <img 
@@ -139,7 +164,7 @@ const Home: React.FC = () => {
             <p className="text-xs text-gray-400 mb-4">3 to 4 Pieces Chicken + Onion Raita & Kathrika</p>
             <div className="flex items-baseline justify-center gap-3 mb-6">
               <span className="text-gray-500 line-through text-base font-semibold">Rs 300</span>
-              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 250</span>
+              <span className="text-[#f5a623] text-3xl font-extrabold">Rs 249</span>
             </div>
 
             <Link 

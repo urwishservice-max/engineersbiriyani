@@ -50,8 +50,8 @@ const Contact = () => {
                   className="w-full bg-[#18181B] border border-[#27272A] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#FFB800] text-sm transition-colors" 
                   required 
                 >
-                  <option value="chicken" className="bg-black text-white">Special Chicken Biryani (1200g - ₹250)</option>
-                  <option value="600g" className="bg-black text-white">Chicken Biryani Box (600g - ₹130)</option>
+                  <option value="chicken" className="bg-black text-white">Special Chicken Biryani (1200g - ₹249)</option>
+                  <option value="600g" className="bg-black text-white">Chicken Biryani Box (600g - ₹129)</option>
                 </select>
               </div>
               <div className="pt-6 text-center flex justify-center">

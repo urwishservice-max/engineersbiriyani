@@ -187,7 +187,7 @@ const Payment = () => {
         totalAmount: currentOrderData.payment?.amount || 0,
         paymentStatus: 'PAID & SCREENSHOT_UPLOADED',
         screenshotUrl: screenshotUrl.startsWith('http') ? screenshotUrl : 'Uploaded via Base64',
-        deliveryDate: '27-Sep-26 (Sunday)'
+        deliveryDate: '11-Oct-2026 (Sunday)'
       });
     } catch (gsErr) {
       console.warn('Google Sheet dispatch error:', gsErr);
@@ -243,7 +243,7 @@ const Payment = () => {
     const amount = finalOrderPayload.payment?.amount || order?.payment?.amount || 0;
     const oId = finalOrderPayload.orderId || orderId;
 
-    const message = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${oId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\nDelivery Date: 27-Sep-26 (Sunday)\n\nPlease verify my payment!`;
+    const message = `Hello Engineer's Biriyani, I have uploaded my payment screenshot for Order ID: ${oId}.\n\nCustomer: ${cName} (${cPhone})\nItems: ${pName} x ${qty}\nTotal Amount: ₹${amount}\nDelivery Date: 11-Oct-2026 (Sunday)\n\nPlease verify my payment!`;
     const waUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`;
 
     setIsUploading(false);
@@ -304,7 +304,7 @@ const Payment = () => {
           <p className="font-mono text-xl font-bold text-white mb-2">{order.orderId}</p>
           <div className="inline-flex items-center gap-1.5 text-xs text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/30 px-3 py-1 rounded-full font-bold">
             <Clock size={12} />
-            <span>Delivery: Sunday, 27-Sep-26</span>
+            <span>Delivery: Sunday, 11-Oct-2026</span>
           </div>
         </div>
         

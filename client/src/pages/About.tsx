@@ -39,12 +39,12 @@ const About: React.FC = () => {
     {
       name: "Mr. Yugesh Balaji",
       role: "Logo Designer",
-      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.22_01797664.jpg"
+      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.24_a1c8d328.jpg"
     },
     {
       name: "Mr. Mohamed Aflal",
       role: "Creative NameLord",
-      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.24_a1c8d328.jpg"
+      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.22_01797664.jpg"
     }
   ];
 
@@ -66,7 +66,7 @@ const About: React.FC = () => {
           </p>
 
           <p className="leading-relaxed text-sm sm:text-base">
-            We operate on a <strong className="text-[#f5a623] font-bold">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday (Next Delivery: 27-Sep-26). This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
+            We operate on a <strong className="text-[#f5a623] font-bold">pre-order only model</strong>, allowing you to book your biryani from Monday to Saturday for a fresh, piping hot delivery every Sunday (Next Delivery: 11-Oct-2026). This approach helps us control food waste, maintain quality, and deliver generous portions at affordable prices.
           </p>
 
           <p className="leading-relaxed text-sm sm:text-base">
