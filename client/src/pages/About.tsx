@@ -44,7 +44,7 @@ const About: React.FC = () => {
     {
       name: "Mr. Mohamed Aflal",
       role: "Creative NameLord",
-      image: "/WhatsApp%20Image%202025-05-17%20at%2019.58.22_01797664.jpg"
+      image: "/mohamed_aflal.jpg"
     }
   ];
 
