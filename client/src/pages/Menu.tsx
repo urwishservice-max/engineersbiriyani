@@ -54,7 +54,7 @@ const Menu = () => {
       {isOrdersClosed && (
         <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-900/90 via-rose-900/90 to-red-900/90 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-semibold border-b border-red-500/30 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
           <Clock size={16} className="text-red-300 animate-pulse" />
-          <span>Notice: Online orders are currently closed. Next Delivery Date: 11-Oct-2026 (Sunday)</span>
+          <span>Notice: Online orders are currently closed. Next Delivery Date: 25-Oct-2026 (Sunday)</span>
         </div>
       )}
       
@@ -71,7 +71,7 @@ const Menu = () => {
             </div>
             <div className="bg-[#FFB800]/15 rounded-full px-4 py-2 flex items-center gap-2 border border-[#FFB800]/40 text-[#FFB800]">
                <Clock size={14} />
-               <span className="text-[11px] uppercase tracking-[0.15em] font-bold">Delivery: Sunday, 11-Oct-2026</span>
+               <span className="text-[11px] uppercase tracking-[0.15em] font-bold">Delivery: Sunday, 25-Oct-2026</span>
             </div>
           </div>
           

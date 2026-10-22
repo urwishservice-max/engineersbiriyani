@@ -260,7 +260,7 @@ const Checkout = () => {
               </h2>
 
               <div className="inline-block px-4 py-1.5 rounded-full bg-[#FFB800]/10 border border-[#FFB800]/30 text-[#FFB800] text-xs font-bold mb-4">
-                Next Delivery Batch: Sunday, 11-Oct-2026
+                Next Delivery Batch: Sunday, 25-Oct-2026
               </div>
 
               <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-lg mx-auto">
@@ -323,7 +323,7 @@ const Checkout = () => {
           <span className="eyebrow mx-auto justify-center flex mb-2">— ALMOST THERE —</span>
           <div className="inline-flex items-center gap-2 bg-[#FFB800]/20 border border-[#FFB800]/50 text-[#FFB800] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 mx-auto">
             <Clock className="w-3.5 h-3.5 animate-pulse" />
-            <span>Delivery Date: Sunday, 11-Oct-2026 (Lunch)</span>
+            <span>Delivery Date: Sunday, 25-Oct-2026 (Lunch)</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-[#FFB800] mb-3 leading-tight">
             Secure Checkout
@@ -350,7 +350,7 @@ const Checkout = () => {
                   <Clock className="w-5 h-5 text-[#FFB800]" />
                   <div>
                     <span className="text-xs text-gray-400 block">Scheduled Delivery</span>
-                    <span className="text-sm font-bold text-white">Sunday, 11-Oct-2026 (Lunch)</span>
+                    <span className="text-sm font-bold text-white">Sunday, 25-Oct-2026 (Lunch)</span>
                   </div>
                 </div>
                 <span className="bg-[#FFB800] text-black font-extrabold text-[11px] px-2.5 py-1 rounded-full uppercase tracking-wider">Confirmed Slot</span>
@@ -622,7 +622,7 @@ const Checkout = () => {
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300 font-medium">Delivery Date</span>
-                    <span className="font-bold text-[#FFB800]">11-Oct-2026 (Sunday)</span>
+                    <span className="font-bold text-[#FFB800]">25-Oct-2026 (Sunday)</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300 font-medium">Payment Method</span>
